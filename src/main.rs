@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use clap::Parser;
 
 mod args;
@@ -5,14 +7,25 @@ mod args;
 fn main() {
     let cargs = args::Cli::parse(); // CLI arguments
 
-    let total = cargs.total;
-    let no_total = cargs.no_total;
     let files = cargs.files;
 
-    for f in files {
-        println!("{f}");
-    }
+    let paths: Vec<PathBuf> = files
+        .iter()
+        .map(|f| PathBuf::from(f))
+        .filter(|f| {
+            if !f.exists() {
+                eprintln!("{}: No such file or directory", f.to_string_lossy());
+                false
+            } else if f.is_dir() {
+                eprintln!("{}: Is a directory", f.to_string_lossy());
+                false
+            } else {
+                f.is_file()
+            }
+        })
+        .collect();
 
-    println!("{total}");
-    println!("{no_total}");
+    for p in paths {
+        println!("{}", p.to_string_lossy());
+    }
 }
