@@ -44,7 +44,7 @@ mod tests {
 		assert_eq!(cli.total, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 	}
-	
+
 	#[test]
 	fn no_files() {
 		let cmd = Cli::command();
@@ -54,7 +54,7 @@ mod tests {
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
-		assert_eq!(cli.files, Vec::<String>::new());
+		assert!(cli.files.is_empty());
 		assert_eq!(cli.total, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 	}
