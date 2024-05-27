@@ -23,7 +23,7 @@ pub struct Cli {
 
 	/// Close the process at any warning
 	#[arg(short, long)]
-	pub werror: bool
+	pub werror: bool,
 }
 
 #[cfg(test)]
@@ -47,6 +47,7 @@ mod tests {
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(!cli.werror)
 	}
 
 	#[test]
@@ -61,6 +62,7 @@ mod tests {
 		assert!(cli.files.is_empty());
 		assert_eq!(cli.total, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(!cli.werror)
 	}
 
 	#[test]
@@ -79,6 +81,7 @@ mod tests {
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "custom_label");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(!cli.werror)
 	}
 
 	#[test]
@@ -96,6 +99,7 @@ mod tests {
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Disabled));
+		assert!(!cli.werror)
 	}
 
 	#[test]
@@ -112,5 +116,24 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert!(matches!(cli.total_column, TotalColumn::Force));
+		assert!(!cli.werror)
+	}
+
+	#[test]
+	fn werror() {
+		let cmd = Cli::command();
+		let matches = cmd.get_matches_from(vec![
+			"wcount", // executable name
+			"file1.txt",
+			"file2.txt",
+			"--werror",
+		]);
+
+		let cli = Cli::from_arg_matches(&matches).unwrap();
+
+		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
+		assert_eq!(cli.total, "total_count");
+		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(cli.werror)
 	}
 }
