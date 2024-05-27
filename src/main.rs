@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, process::exit};
 
 use clap::Parser;
 
@@ -8,6 +8,11 @@ fn main() {
 	let cargs = args::Cli::parse(); // CLI arguments
 
 	let files = cargs.files;
+
+	if files.is_empty() {
+		eprintln!("No files entered");
+		exit(1);
+	}
 
 	let paths: Vec<PathBuf> = files
 		.iter()
@@ -24,6 +29,10 @@ fn main() {
 			}
 		})
 		.collect();
+
+	if paths.is_empty() {
+		exit(1);
+	}
 
 	for p in paths {
 		println!("{}", p.to_string_lossy());
