@@ -20,6 +20,10 @@ pub struct Cli {
 	/// Control the `total_count` column output
 	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
 	pub total_column: TotalColumn,
+
+	/// Close the process at any warning
+	#[arg(short, long)]
+	pub werror: bool
 }
 
 #[cfg(test)]
