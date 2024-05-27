@@ -28,7 +28,7 @@ mod tests {
 	use clap::{CommandFactory, FromArgMatches};
 
 	#[test]
-	fn test_default_total() {
+	fn default() {
 		let cmd = Cli::command();
 		let matches = cmd.get_matches_from(vec![
 			"wcount", // executable name
@@ -44,7 +44,7 @@ mod tests {
 	}
 
 	#[test]
-	fn test_custom_total() {
+	fn custom_total_label() {
 		let cmd = Cli::command();
 		let matches = cmd.get_matches_from(vec![
 			"wcount", // executable name
@@ -62,7 +62,7 @@ mod tests {
 	}
 
 	#[test]
-	fn test_no_total() {
+	fn disabled_total() {
 		let cmd = Cli::command();
 		let matches = cmd.get_matches_from(vec![
 			"wcount", // executable name
@@ -79,7 +79,7 @@ mod tests {
 	}
 
 	#[test]
-	fn test_force_total() {
+	fn force_total() {
 		let cmd = Cli::command();
 		let matches = cmd.get_matches_from(vec![
 			"wcount", // executable name
