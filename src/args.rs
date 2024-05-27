@@ -1,4 +1,11 @@
-use clap::Parser;
+use clap::{Parser, ValueEnum};
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum TotalColumn {
+	Enabled,
+	Disabled,
+	Force,
+}
 
 #[derive(Debug, Parser)]
 #[clap(version)]
@@ -10,14 +17,9 @@ pub struct Cli {
 	#[arg(short, long, default_value_t = {"total_count".to_string()}, value_name = "COLUMN_LABEL")]
 	pub total: String,
 
-	/// Disables the `total_count` column
-	#[arg(long)]
-	pub no_total: bool,
-
-	/// Enable `total_count` column even if only one file is read
-	/// Overrides --no-total
-	#[arg(long, verbatim_doc_comment)]
-	pub force_total: bool,
+	/// Control the `total_count` column output
+	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
+	pub total_column: TotalColumn,
 }
 
 #[cfg(test)]
@@ -38,8 +40,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "total_count");
-		assert!(!cli.no_total);
-		assert!(!cli.force_total);
+		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 	}
 
 	#[test]
@@ -57,8 +58,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "custom_label");
-		assert!(!cli.no_total);
-		assert!(!cli.force_total);
+		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 	}
 
 	#[test]
@@ -68,15 +68,14 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--no-total",
+			"--total-column=disabled",
 		]);
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "total_count");
-		assert!(cli.no_total);
-		assert!(!cli.force_total);
+		assert!(matches!(cli.total_column, TotalColumn::Disabled));
 	}
 
 	#[test]
@@ -86,14 +85,12 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--force-total",
+			"--total-column=force",
 		]);
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
-		assert!(!cli.no_total);
-		assert!(cli.force_total);
+		assert!(matches!(cli.total_column, TotalColumn::Force));
 	}
 }
