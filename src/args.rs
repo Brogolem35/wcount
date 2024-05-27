@@ -39,6 +39,7 @@ mod tests {
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "total_count");
 		assert!(!cli.no_total);
+		assert!(!cli.force_total);
 	}
 
 	#[test]
@@ -57,6 +58,7 @@ mod tests {
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "custom_label");
 		assert!(!cli.no_total);
+		assert!(!cli.force_total);
 	}
 
 	#[test]
@@ -74,5 +76,24 @@ mod tests {
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total, "total_count");
 		assert!(cli.no_total);
+		assert!(!cli.force_total);
+	}
+
+	#[test]
+	fn test_force_total() {
+		let cmd = Cli::command();
+		let matches = cmd.get_matches_from(vec![
+			"wcount", // executable name
+			"file1.txt",
+			"file2.txt",
+			"--force-total",
+		]);
+
+		let cli = Cli::from_arg_matches(&matches).unwrap();
+
+		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
+		assert_eq!(cli.total, "total_count");
+		assert!(!cli.no_total);
+		assert!(cli.force_total);
 	}
 }
