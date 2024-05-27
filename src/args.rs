@@ -115,6 +115,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
+		assert_eq!(cli.total, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Force));
 		assert!(!cli.werror)
 	}
