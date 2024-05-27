@@ -13,6 +13,11 @@ pub struct Cli {
     /// Disables the `total_count` column
     #[arg(long)]
     pub no_total: bool,
+
+    /// Enable `total_count` column even if only one file is read
+    /// Overrides --no-total
+    #[arg(long, verbatim_doc_comment)]
+    pub force_total: bool,
 }
 
 #[cfg(test)]
