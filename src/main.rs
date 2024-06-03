@@ -1,4 +1,9 @@
-use std::{path::PathBuf, process::exit};
+use std::{
+	fs::{self, read_to_string, File},
+	io::{self, Read},
+	path::PathBuf,
+	process::exit,
+};
 
 use clap::Parser;
 
@@ -14,27 +19,39 @@ fn main() {
 		exit(1);
 	}
 
-	let paths: Vec<PathBuf> = files
-		.iter()
-		.map(|f| PathBuf::from(f))
-		.filter(|f| {
-			if !f.exists() {
-				eprintln!("{}: No such file or directory", f.to_string_lossy());
-				false
-			} else if f.is_dir() {
-				eprintln!("{}: Is a directory", f.to_string_lossy());
-				false
-			} else {
-				f.is_file()
+	let files: Vec<_> = files.iter().filter_map(|f| {
+		if f == "-" {
+			let mut buffer = String::new();
+			io::stdin().read_to_string(&mut buffer);
+			Some(buffer)
+		} else {
+			match fs::metadata(f) {
+				Ok(meta) => {
+					if meta.is_file() {
+						let mut buffer = String::new();
+						File::open(f).unwrap().read_to_string(&mut buffer);
+						Some(buffer)
+					} else if meta.is_dir() {
+						eprintln!("{}: Is a directory", f);
+						None
+					} else {
+						eprintln!("{}: error accessing", f);
+						None
+					}
+				}
+				Err(e) => {
+					eprintln!("{}: error accessing", f);
+					None
+				}
 			}
-		})
-		.collect();
+		}
+	}).collect();
 
-	if paths.is_empty() {
+	if files.is_empty() {
 		exit(1);
 	}
 
-	for p in paths {
-		println!("{}", p.to_string_lossy());
+	for p in files {
+		println!("{}", p);
 	}
 }
