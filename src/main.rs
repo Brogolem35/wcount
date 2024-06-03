@@ -6,7 +6,7 @@ use std::{
 	process::exit,
 };
 
-use clap::Parser;
+use clap::{builder::Str, Parser};
 
 #[derive(Debug)]
 enum Stream {
@@ -15,6 +15,35 @@ enum Stream {
 }
 
 impl Stream {
+	fn from_str(path: &str) -> Option<Stream> {
+		if path == "-" {
+			Some(Stream::Stdin(io::stdin()))
+		} else {
+			match fs::metadata(path) {
+				Ok(meta) => {
+					if meta.is_file() {
+						if let Ok(file) = File::open(path) {
+							Some(Stream::File(file, path.to_string()))
+						} else {
+							eprintln!("{}: error accessing", path);
+							None
+						}
+					} else if meta.is_dir() {
+						eprintln!("{}: Is a directory", path);
+						None
+					} else {
+						eprintln!("{}: error accessing", path);
+						None
+					}
+				}
+				Err(e) => {
+					eprintln!("{}: error accessing", path);
+					None
+				}
+			}
+		}
+	}
+
 	fn read_to_string(&mut self) -> Option<String> {
 		let mut buf = String::new();
 
@@ -47,40 +76,7 @@ fn main() {
 		exit(1);
 	}
 
-	let files: Vec<_> = files
-		.iter()
-		.filter_map(|f| {
-			if f == "-" {
-				Some(Stream::Stdin(io::stdin()))
-			} else {
-				match fs::metadata(f) {
-					Ok(meta) => {
-						if meta.is_file() {
-							if let Ok(file) = File::open(f) {
-								Some(Stream::File(
-									file,
-									f.to_string(),
-								))
-							} else {
-								eprintln!("{}: error accessing", f);
-								None
-							}
-						} else if meta.is_dir() {
-							eprintln!("{}: Is a directory", f);
-							None
-						} else {
-							eprintln!("{}: error accessing", f);
-							None
-						}
-					}
-					Err(e) => {
-						eprintln!("{}: error accessing", f);
-						None
-					}
-				}
-			}
-		})
-		.collect();
+	let files: Vec<_> = files.iter().filter_map(|f| Stream::from_str(f)).collect();
 
 	if files.is_empty() {
 		exit(1);
