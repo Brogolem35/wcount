@@ -1,3 +1,4 @@
+mod args;
 use std::{
 	fs::{self, read_to_string, File},
 	io::{self, Read},
@@ -6,8 +7,6 @@ use std::{
 };
 
 use clap::Parser;
-
-mod args;
 
 fn main() {
 	let cargs = args::Cli::parse(); // CLI arguments
@@ -19,33 +18,38 @@ fn main() {
 		exit(1);
 	}
 
-	let files: Vec<_> = files.iter().filter_map(|f| {
-		if f == "-" {
-			let mut buffer = String::new();
-			io::stdin().read_to_string(&mut buffer);
-			Some(buffer)
-		} else {
-			match fs::metadata(f) {
-				Ok(meta) => {
-					if meta.is_file() {
-						let mut buffer = String::new();
-						File::open(f).unwrap().read_to_string(&mut buffer);
-						Some(buffer)
-					} else if meta.is_dir() {
-						eprintln!("{}: Is a directory", f);
-						None
-					} else {
+	let files: Vec<_> = files
+		.iter()
+		.filter_map(|f| {
+			if f == "-" {
+				let mut buffer = String::new();
+				io::stdin().read_to_string(&mut buffer);
+				Some(buffer)
+			} else {
+				match fs::metadata(f) {
+					Ok(meta) => {
+						if meta.is_file() {
+							let mut buffer = String::new();
+							File::open(f)
+								.unwrap()
+								.read_to_string(&mut buffer);
+							Some(buffer)
+						} else if meta.is_dir() {
+							eprintln!("{}: Is a directory", f);
+							None
+						} else {
+							eprintln!("{}: error accessing", f);
+							None
+						}
+					}
+					Err(e) => {
 						eprintln!("{}: error accessing", f);
 						None
 					}
 				}
-				Err(e) => {
-					eprintln!("{}: error accessing", f);
-					None
-				}
 			}
-		}
-	}).collect();
+		})
+		.collect();
 
 	if files.is_empty() {
 		exit(1);
