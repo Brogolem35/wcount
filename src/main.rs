@@ -8,6 +8,35 @@ use std::{
 
 use clap::Parser;
 
+#[derive(Debug)]
+enum Stream {
+	Stdin(io::Stdin),
+	File(File, String),
+}
+
+impl Stream {
+	fn read_to_string(&mut self) -> Option<String> {
+		let mut buf = String::new();
+
+		match self {
+			Stream::Stdin(si) => {
+				if si.read_to_string(&mut buf).is_err() {
+					eprintln!("{}: invalid UTF-8", "-");
+					return None;
+				}
+			}
+			Stream::File(f, n) => {
+				if f.read_to_string(&mut buf).is_err() {
+					eprintln!("{}: invalid UTF-8", n);
+					return None;
+				}
+			}
+		};
+
+		Some(buf)
+	}
+}
+
 fn main() {
 	let cargs = args::Cli::parse(); // CLI arguments
 
@@ -22,18 +51,20 @@ fn main() {
 		.iter()
 		.filter_map(|f| {
 			if f == "-" {
-				let mut buffer = String::new();
-				io::stdin().read_to_string(&mut buffer);
-				Some(buffer)
+				Some(Stream::Stdin(io::stdin()))
 			} else {
 				match fs::metadata(f) {
 					Ok(meta) => {
 						if meta.is_file() {
-							let mut buffer = String::new();
-							File::open(f)
-								.unwrap()
-								.read_to_string(&mut buffer);
-							Some(buffer)
+							if let Ok(file) = File::open(f) {
+								Some(Stream::File(
+									file,
+									f.to_string(),
+								))
+							} else {
+								eprintln!("{}: error accessing", f);
+								None
+							}
 						} else if meta.is_dir() {
 							eprintln!("{}: Is a directory", f);
 							None
@@ -56,6 +87,6 @@ fn main() {
 	}
 
 	for p in files {
-		println!("{}", p);
+		println!("{:?}", p);
 	}
 }
