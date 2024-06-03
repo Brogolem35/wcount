@@ -26,19 +26,19 @@ impl Stream {
 					if let Ok(file) = File::open(path) {
 						Some(Stream::File(file, path.to_string()))
 					} else {
-						eprintln!("{}: error accessing", path);
+						eprintln!("{}: Error accessing", path);
 						None
 					}
 				} else if meta.is_dir() {
 					eprintln!("{}: Is a directory", path);
 					None
 				} else {
-					eprintln!("{}: error accessing", path);
+					eprintln!("{}: Error accessing", path);
 					None
 				}
 			}
 			Err(e) => {
-				eprintln!("{}: error accessing", path);
+				eprintln!("{}: {}", path, e);
 				None
 			}
 		}
