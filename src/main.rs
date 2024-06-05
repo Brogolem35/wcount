@@ -80,6 +80,7 @@ fn main() {
 	let files: Vec<_> = files.iter().filter_map(|f| Stream::from_str(f)).collect();
 
 	if files.is_empty() {
+		eprintln!("Args does not contain any valid files to process");
 		exit(1);
 	}
 
