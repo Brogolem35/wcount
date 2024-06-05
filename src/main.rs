@@ -103,6 +103,7 @@ fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
 		Lazy::new(|| Regex::new(r"(\w|\d|'|-)+(\.|!|\?)*").unwrap());
 
 	let content = s.read_to_string()?;
+	let tokens = WORD_REGEX.find_iter(&content).map(|m| m.as_str());
 
 	todo!("This will return a Vec of tuples derived from a hashmap");
 }
