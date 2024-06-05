@@ -1,6 +1,10 @@
 mod args;
 use std::{
-	collections::HashMap, fs::{self, read_to_string, File}, io::{self, Read}, path::PathBuf, process::exit
+	collections::HashMap,
+	fs::{self, read_to_string, File},
+	io::{self, Read},
+	path::PathBuf,
+	process::exit,
 };
 
 use args::Cli;
@@ -82,13 +86,16 @@ fn main() {
 		exit(1);
 	}
 
-	for p in files {
+	let res: Vec<_> = streams
+		.into_iter()
+		.filter_map(|s| do_stuff(s, &cargs))
+		.collect();
+
+	for p in res {
 		println!("{:?}", p);
 	}
 }
 
 fn do_stuff(s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
-	let res = HashMap::<String, i32>::new();
-
-	Some(res.into_iter().collect())
+	todo!("This will return a Vec of tuples derived from a hashmap");
 }
