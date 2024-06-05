@@ -109,5 +109,8 @@ fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
 		a
 	});
 
-	todo!("This will return a Vec of tuples derived from a hashmap");
+	Some(counts
+		.into_iter()
+		.map(|(s, i)| (s.to_string(), i))
+		.collect())
 }
