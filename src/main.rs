@@ -88,3 +88,9 @@ fn main() {
 		println!("{:?}", p);
 	}
 }
+
+fn do_stuff(s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
+	let res = HashMap::<String, i32>::new();
+
+	Some(res.into_iter().collect())
+}
