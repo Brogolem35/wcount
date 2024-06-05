@@ -1,11 +1,9 @@
 mod args;
 use std::{
-	fs::{self, read_to_string, File},
-	io::{self, Read},
-	path::PathBuf,
-	process::exit,
+	collections::HashMap, fs::{self, read_to_string, File}, io::{self, Read}, path::PathBuf, process::exit
 };
 
+use args::Cli;
 use clap::{builder::Str, Parser};
 
 #[derive(Debug)]
