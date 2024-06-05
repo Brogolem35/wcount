@@ -9,6 +9,8 @@ use std::{
 
 use args::Cli;
 use clap::{builder::Str, Parser};
+use once_cell::sync::Lazy;
+use regex::Regex;
 
 #[derive(Debug)]
 enum Stream {
@@ -97,6 +99,9 @@ fn main() {
 }
 
 fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
+	static WORD_REGEX: Lazy<Regex> =
+		Lazy::new(|| Regex::new(r"(\w|\d|'|-)+(\.|!|\?)*").unwrap());
+
 	let content = s.read_to_string()?;
 
 	todo!("This will return a Vec of tuples derived from a hashmap");
