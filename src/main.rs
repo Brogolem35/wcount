@@ -68,7 +68,7 @@ impl Stream {
 fn main() {
 	let cargs = args::Cli::parse(); // CLI arguments
 
-	let files = cargs.files;
+	let files = &cargs.files;
 
 	if files.is_empty() {
 		eprintln!("No files entered");
