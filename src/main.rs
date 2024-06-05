@@ -104,6 +104,10 @@ fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
 
 	let content = s.read_to_string()?;
 	let tokens = WORD_REGEX.find_iter(&content).map(|m| m.as_str());
+	let counts = tokens.fold(HashMap::new(), |mut a, c| {
+		*a.entry(c).or_insert(0) += 1;
+		a
+	});
 
 	todo!("This will return a Vec of tuples derived from a hashmap");
 }
