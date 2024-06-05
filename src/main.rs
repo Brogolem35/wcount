@@ -121,7 +121,7 @@ mod tests {
 
 	static WORD_REGEX: Lazy<Regex> =
 		Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
-		
+
 	#[test]
 	fn regex1() {
 		let rres: Vec<_> = WORD_REGEX
