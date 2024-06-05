@@ -96,6 +96,8 @@ fn main() {
 	}
 }
 
-fn do_stuff(s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
+fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
+	let content = s.read_to_string()?;
+
 	todo!("This will return a Vec of tuples derived from a hashmap");
 }
