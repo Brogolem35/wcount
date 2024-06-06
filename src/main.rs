@@ -11,6 +11,7 @@ use args::Cli;
 use clap::{builder::Str, Parser};
 use once_cell::sync::Lazy;
 use regex::Regex;
+use ustr::{ustr, Ustr};
 
 #[derive(Debug)]
 enum Stream {
@@ -98,21 +99,18 @@ fn main() {
 	}
 }
 
-fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<Vec<(String, i32)>> {
+fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<HashMap<Ustr, i32>> {
 	static WORD_REGEX: Lazy<Regex> =
 		Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
 
 	let content = s.read_to_string()?;
 	let tokens = WORD_REGEX.find_iter(&content).map(|m| m.as_str());
 	let counts = tokens.fold(HashMap::new(), |mut a, c| {
-		*a.entry(c).or_insert(0) += 1;
+		*a.entry(ustr(c)).or_insert(0) += 1;
 		a
 	});
 
-	Some(counts
-		.into_iter()
-		.map(|(s, i)| (s.to_string(), i))
-		.collect())
+	Some(counts)
 }
 
 #[cfg(test)]
