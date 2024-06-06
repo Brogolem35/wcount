@@ -101,12 +101,12 @@ fn main() {
 
 fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<HashMap<Ustr, i32>> {
 	let content = s.read_to_string()?;
-	let counts = count_words(content, cargs);
+	let counts = count_words(content);
 
 	counts
 }
 
-fn count_words(s: String, cargs: &Cli) -> Option<HashMap<Ustr, i32>> {
+fn count_words(s: String) -> Option<HashMap<Ustr, i32>> {
 	static WORD_REGEX: Lazy<Regex> =
 		Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
 
