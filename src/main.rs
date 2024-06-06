@@ -1,15 +1,9 @@
 mod args;
 mod stream;
-use std::{
-	collections::HashMap,
-	fs::{self, read_to_string, File},
-	io::{self, Read},
-	path::PathBuf,
-	process::exit,
-};
+use std::{collections::HashMap, process::exit};
 
 use args::Cli;
-use clap::{builder::Str, Parser};
+use clap::Parser;
 use once_cell::sync::Lazy;
 use regex::Regex;
 use stream::Stream;
