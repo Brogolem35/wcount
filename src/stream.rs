@@ -39,7 +39,6 @@ impl Stream {
 		}
 	}
 
-	#[allow(dead_code)]
 	pub fn read_to_string(&mut self) -> Option<String> {
 		let mut buf = String::new();
 
