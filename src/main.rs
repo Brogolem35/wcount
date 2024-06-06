@@ -165,4 +165,22 @@ mod tests {
 
 		assert_eq!(rres, vec!["123", "1", "23", "1", "2", "2d3"]);
 	}
+
+	#[test]
+	fn word_count1() {
+		let res = count_words("lorem ipsum dolor".to_owned()).unwrap();
+
+		assert_eq!(res[&ustr("lorem")], 1);
+		assert_eq!(res[&ustr("ipsum")], 1);
+		assert_eq!(res[&ustr("dolor")], 1);
+	}
+
+	#[test]
+	fn word_count2() {
+		let res = count_words("lorem dolor ipsum dolor. lorem? dolor dolor".to_owned()).unwrap();
+
+		assert_eq!(res[&ustr("lorem")], 2);
+		assert_eq!(res[&ustr("ipsum")], 1);
+		assert_eq!(res[&ustr("dolor")], 4);
+	}
 }
