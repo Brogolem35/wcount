@@ -92,9 +92,13 @@ fn main() {
 		.filter_map(|s| StreamWordCount::from_stream(s))
 		.collect();
 
+	let total = TotalCount::from_counts(res.iter());
+
 	for p in res {
 		println!("{:?}: {:?}", p.from, p.counts);
 	}
+
+	println!("{:?}", total.counts);
 }
 
 #[cfg(test)]
