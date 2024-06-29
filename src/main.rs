@@ -152,12 +152,49 @@ mod tests {
 
 	#[test]
 	fn word_count2() {
-		let res = StreamWordCount::count_words(
-			"lorem dolor ipsum dolor. lorem? dolor dolor",
-		);
+		let res =
+			StreamWordCount::count_words("lorem dolor ipsum dolor. lorem? dolor dolor");
 
 		assert_eq!(res[&ustr("lorem")], 2);
 		assert_eq!(res[&ustr("ipsum")], 1);
 		assert_eq!(res[&ustr("dolor")], 4);
+	}
+
+	#[test]
+	fn merge_maps1() {
+		let mut map1 = HashMap::from([("lorem", 3), ("ipsum", 2), ("dolor", 17)]);
+		let map2 = HashMap::from([("lorem", 27), ("ipsum", 29), ("dolor", 15)]);
+
+		TotalCount::merge_maps(&mut map1, &map2);
+
+		assert_eq!(
+			map1,
+			HashMap::from([("lorem", 30), ("ipsum", 31), ("dolor", 32)])
+		)
+	}
+
+	#[test]
+	fn merge_maps2() {
+		let mut map1 = HashMap::from([
+			(ustr("lorem"), 3),
+			(ustr("ipsum"), 2),
+			(ustr("dolor"), 17),
+		]);
+		let map2 = HashMap::from([
+			(ustr("lorem"), 27),
+			(ustr("ipsum"), 29),
+			(ustr("dolor"), 15),
+		]);
+
+		TotalCount::merge_maps(&mut map1, &map2);
+
+		assert_eq!(
+			map1,
+			HashMap::from([
+				(ustr("lorem"), 30),
+				(ustr("ipsum"), 31),
+				(ustr("dolor"), 32)
+			])
+		)
 	}
 }
