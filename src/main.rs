@@ -9,6 +9,32 @@ use regex::Regex;
 use stream::Stream;
 use ustr::{ustr, Ustr};
 
+struct StreamWordCount {
+	from: Stream,
+	counts: HashMap<Ustr, usize>,
+}
+
+impl StreamWordCount {
+	fn from_stream(mut stream: Stream) -> Option<Self> {
+		let content = stream.read_to_string()?;
+
+		Some(StreamWordCount {
+			from: stream,
+			counts: Self::count_words(&content),
+		})
+	}
+
+	fn count_words(s: &str) -> HashMap<Ustr, usize> {
+		let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
+		let counts = tokens.fold(HashMap::new(), |mut a, c| {
+			*a.entry(ustr(c)).or_insert(0) += 1;
+			a
+		});
+
+		counts
+	}
+}
+
 static WORD_REGEX: Lazy<Regex> =
 	Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
 
@@ -31,29 +57,12 @@ fn main() {
 
 	let res: Vec<_> = streams
 		.into_iter()
-		.filter_map(|s| do_stuff(s, &cargs))
+		.filter_map(|s| StreamWordCount::from_stream(s))
 		.collect();
 
 	for p in res {
-		println!("{:?}", p);
+		println!("{:?}: {:?}", p.from, p.counts);
 	}
-}
-
-fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<HashMap<Ustr, usize>> {
-	let content = s.read_to_string()?;
-	let counts = count_words(content);
-
-	counts
-}
-
-fn count_words(s: String) -> Option<HashMap<Ustr, usize>> {
-	let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
-	let counts = tokens.fold(HashMap::new(), |mut a, c| {
-		*a.entry(ustr(c)).or_insert(0) += 1;
-		a
-	});
-
-	Some(counts)
 }
 
 #[cfg(test)]
@@ -102,7 +111,7 @@ mod tests {
 
 	#[test]
 	fn word_count1() {
-		let res = count_words("lorem ipsum dolor".to_owned()).unwrap();
+		let res = StreamWordCount::count_words("lorem ipsum dolor");
 
 		assert_eq!(res[&ustr("lorem")], 1);
 		assert_eq!(res[&ustr("ipsum")], 1);
@@ -111,8 +120,9 @@ mod tests {
 
 	#[test]
 	fn word_count2() {
-		let res = count_words("lorem dolor ipsum dolor. lorem? dolor dolor".to_owned())
-			.unwrap();
+		let res = StreamWordCount::count_words(
+			"lorem dolor ipsum dolor. lorem? dolor dolor",
+		);
 
 		assert_eq!(res[&ustr("lorem")], 2);
 		assert_eq!(res[&ustr("ipsum")], 1);
