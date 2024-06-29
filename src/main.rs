@@ -35,6 +35,33 @@ impl StreamWordCount {
 	}
 }
 
+struct TotalCount {
+	counts: HashMap<Ustr, usize>,
+}
+
+impl TotalCount {
+	fn from_counts<I>(swc: I) -> Self
+	where
+		I: Iterator<Item = StreamWordCount>,
+	{
+		let mut counts = HashMap::new();
+
+		for wcounts in swc {
+			for (w, c) in wcounts.counts {
+				*counts.entry(w).or_insert(0) += c;
+			}
+		}
+
+		TotalCount { counts }
+	}
+
+	fn add_count(&mut self, swc: &StreamWordCount) {
+		for (w, c) in swc.counts.iter() {
+			*self.counts.entry(*w).or_insert(0) += c;
+		}
+	}
+}
+
 static WORD_REGEX: Lazy<Regex> =
 	Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
 
