@@ -9,6 +9,9 @@ use regex::Regex;
 use stream::Stream;
 use ustr::{ustr, Ustr};
 
+static WORD_REGEX: Lazy<Regex> =
+	Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
+
 fn main() {
 	let cargs = args::Cli::parse(); // CLI arguments
 
@@ -44,9 +47,6 @@ fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<HashMap<Ustr, i32>> {
 }
 
 fn count_words(s: String) -> Option<HashMap<Ustr, i32>> {
-	static WORD_REGEX: Lazy<Regex> =
-		Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
-
 	let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
 	let counts = tokens.fold(HashMap::new(), |mut a, c| {
 		*a.entry(ustr(c)).or_insert(0) += 1;
@@ -59,9 +59,6 @@ fn count_words(s: String) -> Option<HashMap<Ustr, i32>> {
 #[cfg(test)]
 mod tests {
 	use super::*;
-
-	static WORD_REGEX: Lazy<Regex> =
-		Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
 
 	#[test]
 	fn regex1() {
