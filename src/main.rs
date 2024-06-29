@@ -40,9 +40,9 @@ struct TotalCount {
 }
 
 impl TotalCount {
-	fn from_counts<I>(swc: I) -> Self
+	fn from_counts<'a, I>(swc: I) -> Self
 	where
-		I: Iterator<Item = StreamWordCount>,
+		I: Iterator<Item = &'a StreamWordCount>,
 	{
 		let mut counts = HashMap::new();
 
