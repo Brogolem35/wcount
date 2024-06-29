@@ -1,6 +1,6 @@
 mod args;
 mod stream;
-use std::{collections::HashMap, process::exit};
+use std::{collections::HashMap, hash::Hash, process::exit};
 
 use args::Cli;
 use clap::Parser;
@@ -47,17 +47,22 @@ impl TotalCount {
 		let mut counts = HashMap::new();
 
 		for wcounts in swc {
-			for (w, c) in wcounts.counts {
-				*counts.entry(w).or_insert(0) += c;
-			}
+			Self::merge_maps(&mut counts, &wcounts.counts);
 		}
 
 		TotalCount { counts }
 	}
 
 	fn add_count(&mut self, swc: &StreamWordCount) {
-		for (w, c) in swc.counts.iter() {
-			*self.counts.entry(*w).or_insert(0) += c;
+		Self::merge_maps(&mut self.counts, &swc.counts);
+	}
+
+	fn merge_maps<K>(a: &mut HashMap<K, usize>, b: &HashMap<K, usize>)
+	where
+		K: Eq + Hash + Clone,
+	{
+		for (w, c) in b.iter() {
+			*a.entry(w.clone()).or_insert(0) += c;
 		}
 	}
 }
