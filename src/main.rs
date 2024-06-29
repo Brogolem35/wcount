@@ -39,14 +39,14 @@ fn main() {
 	}
 }
 
-fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<HashMap<Ustr, i32>> {
+fn do_stuff(mut s: Stream, cargs: &Cli) -> Option<HashMap<Ustr, usize>> {
 	let content = s.read_to_string()?;
 	let counts = count_words(content);
 
 	counts
 }
 
-fn count_words(s: String) -> Option<HashMap<Ustr, i32>> {
+fn count_words(s: String) -> Option<HashMap<Ustr, usize>> {
 	let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
 	let counts = tokens.fold(HashMap::new(), |mut a, c| {
 		*a.entry(ustr(c)).or_insert(0) += 1;
