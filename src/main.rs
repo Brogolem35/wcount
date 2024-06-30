@@ -1,8 +1,8 @@
 mod args;
 mod count;
-mod stream;
 mod result;
-use std::process::exit;
+mod stream;
+use std::{io, process::exit};
 
 use clap::Parser;
 use count::*;
