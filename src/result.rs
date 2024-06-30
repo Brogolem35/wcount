@@ -2,7 +2,7 @@ use ustr::Ustr;
 
 use crate::count::*;
 
-enum ResultItem {
+pub enum ResultItem {
 	Total(TotalCount),
 	Stream(StreamWordCount),
 }
