@@ -1,6 +1,7 @@
 mod args;
 mod count;
 mod stream;
+mod result;
 use std::process::exit;
 
 use clap::Parser;
