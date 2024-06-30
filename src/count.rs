@@ -25,7 +25,11 @@ impl StreamWordCount {
 	}
 
 	pub fn to_ordered_vec(&self) -> Vec<(Ustr, usize)> {
-		let mut res: Vec<_> = self.counts.iter().map(|(s, i)| (s.clone(), i.clone())).collect();
+		let mut res: Vec<_> = self
+			.counts
+			.iter()
+			.map(|(s, i)| (s.clone(), i.clone()))
+			.collect();
 		res.sort_by(|(_, a), (_, b)| a.cmp(b));
 
 		res
@@ -65,7 +69,11 @@ impl TotalCount {
 	}
 
 	pub fn to_ordered_vec(&self) -> Vec<(Ustr, usize)> {
-		let mut res: Vec<_> = self.counts.iter().map(|(s, i)| (s.clone(), i.clone())).collect();
+		let mut res: Vec<_> = self
+			.counts
+			.iter()
+			.map(|(s, i)| (s.clone(), i.clone()))
+			.collect();
 		res.sort_by(|(_, a), (_, b)| a.cmp(b));
 
 		res
