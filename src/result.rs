@@ -10,7 +10,7 @@ pub enum ResultItem {
 impl ResultItem {
 	pub fn label(&self) -> String {
 		match self {
-			Self::Total(_) => String::from("total_column"),
+			Self::Total(_) => String::from("total_count"),
 			Self::Stream(s) => s.label(),
 		}
 	}
