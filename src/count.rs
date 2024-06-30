@@ -24,6 +24,13 @@ impl StreamWordCount {
 		})
 	}
 
+	pub fn to_ordered_vec(&self) -> Vec<(Ustr, usize)> {
+		let mut res: Vec<_> = self.counts.iter().map(|(s, i)| (s.clone(), i.clone())).collect();
+		res.sort_by(|(_, a), (_, b)| a.cmp(b));
+
+		res
+	}
+
 	fn count_words(s: &str) -> HashMap<Ustr, usize> {
 		let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
 		let counts = tokens.fold(HashMap::new(), |mut a, c| {
@@ -55,6 +62,13 @@ impl TotalCount {
 
 	pub fn add_count(&mut self, swc: &StreamWordCount) {
 		Self::merge_maps(&mut self.counts, &swc.counts);
+	}
+
+	pub fn to_ordered_vec(&self) -> Vec<(Ustr, usize)> {
+		let mut res: Vec<_> = self.counts.iter().map(|(s, i)| (s.clone(), i.clone())).collect();
+		res.sort_by(|(_, a), (_, b)| a.cmp(b));
+
+		res
 	}
 
 	fn merge_maps<K>(a: &mut HashMap<K, usize>, b: &HashMap<K, usize>)
