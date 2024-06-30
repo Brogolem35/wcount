@@ -35,6 +35,10 @@ impl StreamWordCount {
 		res
 	}
 
+	pub fn label(&self) -> String {
+		self.from.label()
+	}
+
 	fn count_words(s: &str) -> HashMap<Ustr, usize> {
 		let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
 		let counts = tokens.fold(HashMap::new(), |mut a, c| {

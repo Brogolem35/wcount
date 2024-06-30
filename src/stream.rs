@@ -59,4 +59,11 @@ impl Stream {
 
 		Some(buf)
 	}
+
+	pub fn label(&self) -> String {
+		match self {
+			Self::Stdin(_) => String::from("standard_input"),
+			Self::File(_, s) => s.clone(),
+		}
+	}
 }
