@@ -50,6 +50,7 @@ impl StreamWordCount {
 	}
 }
 
+#[derive(Clone)]
 pub struct TotalCount {
 	pub counts: HashMap<Ustr, usize>,
 }
