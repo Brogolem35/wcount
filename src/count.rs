@@ -79,7 +79,7 @@ impl TotalCount {
 			.iter()
 			.map(|(s, i)| (s.clone(), i.clone()))
 			.collect();
-		res.sort_by(|(_, a), (_, b)| a.cmp(b));
+		res.sort_by(|(_, a), (_, b)| a.cmp(b).reverse());
 
 		res
 	}
