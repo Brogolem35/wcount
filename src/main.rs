@@ -6,6 +6,7 @@ use std::{io, process::exit};
 
 use clap::Parser;
 use count::*;
+use result::ResultItem;
 use stream::Stream;
 
 fn main() {
@@ -25,16 +26,29 @@ fn main() {
 		exit(1);
 	}
 
-	let res: Vec<_> = streams
+	let counts: Vec<_> = streams
 		.into_iter()
 		.filter_map(|s| StreamWordCount::from_stream(s))
 		.collect();
 
-	let total = TotalCount::from_counts(res.iter());
+	let total = TotalCount::from_counts(counts.iter());
+	let mut scounts: Vec<_> = counts.into_iter().map(|s| ResultItem::Stream(s)).collect();
 
-	for p in res {
-		println!("{:?}: {:?}", p.from, p.counts);
+	let mut res = vec![ResultItem::Total(total.clone())];
+	res.append(&mut scounts);
+
+	let mut wtr = csv::Writer::from_writer(io::stdout());
+	wtr.write_field("word")
+		.expect("Could not output the result");
+	wtr.write_record(res.iter().map(|r| r.label()))
+		.expect("Could not output the result");
+
+	for word in total.to_ordered_vec().iter().map(|(s, _)| s) {
+		wtr.write_field(word.as_str())
+			.expect("Could not output the result");
+		wtr.write_record(res.iter().map(|r| r.count(word).to_string()))
+			.expect("Could not output the result");
 	}
 
-	println!("{:?}", total.counts);
+	wtr.flush().expect("Could not output the result");
 }
