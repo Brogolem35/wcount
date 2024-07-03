@@ -1,8 +1,8 @@
-use std::{collections::HashMap, hash::Hash};
+use std::{collections::HashMap, hash::{BuildHasher, Hash, Hasher}};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
-use ustr::{ustr, Ustr};
+use ustr::{ustr, Ustr, UstrMap};
 
 use crate::stream::Stream;
 
@@ -11,7 +11,7 @@ static WORD_REGEX: Lazy<Regex> =
 
 pub struct StreamWordCount {
 	pub from: Stream,
-	pub counts: HashMap<Ustr, usize>,
+	pub counts: UstrMap<usize>,
 }
 
 impl StreamWordCount {
@@ -39,9 +39,9 @@ impl StreamWordCount {
 		self.from.label()
 	}
 
-	fn count_words(s: &str) -> HashMap<Ustr, usize> {
+	fn count_words(s: &str) -> UstrMap<usize> {
 		let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
-		let counts = tokens.fold(HashMap::new(), |mut a, c| {
+		let counts = tokens.fold(UstrMap::default(), |mut a, c| {
 			*a.entry(ustr(c)).or_insert(0) += 1;
 			a
 		});
@@ -52,7 +52,7 @@ impl StreamWordCount {
 
 #[derive(Clone)]
 pub struct TotalCount {
-	pub counts: HashMap<Ustr, usize>,
+	pub counts: UstrMap<usize>,
 }
 
 impl TotalCount {
@@ -60,7 +60,7 @@ impl TotalCount {
 	where
 		I: Iterator<Item = &'a StreamWordCount>,
 	{
-		let mut counts = HashMap::new();
+		let mut counts = UstrMap::default();
 
 		for wcounts in swc {
 			Self::merge_maps(&mut counts, &wcounts.counts);
@@ -84,7 +84,7 @@ impl TotalCount {
 		res
 	}
 
-	fn merge_maps<K>(a: &mut HashMap<K, usize>, b: &HashMap<K, usize>)
+	fn merge_maps<K, H: BuildHasher>(a: &mut HashMap<K, usize, H>, b: &HashMap<K, usize, H>)
 	where
 		K: Eq + Hash + Clone,
 	{
