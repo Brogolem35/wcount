@@ -3,29 +3,23 @@ use std::{
 	hash::{BuildHasher, Hash, Hasher},
 };
 
-use once_cell::sync::Lazy;
 use regex::Regex;
 use ustr::{ustr, Ustr, UstrMap};
 
 use crate::stream::Stream;
 
-static WORD_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
-
 pub struct StreamWordCount {
 	pub from: Stream,
-	pub pattern: &'static Regex,
 	pub counts: UstrMap<usize>,
 }
 
 impl StreamWordCount {
-	pub fn from_stream(mut stream: Stream) -> Option<Self> {
+	pub fn from_stream(mut stream: Stream, pattern: &'static Regex) -> Option<Self> {
 		let content = stream.read_to_string()?;
 
 		Some(StreamWordCount {
 			from: stream,
-			pattern: &WORD_REGEX,
-			counts: Self::count_words(&content),
+			counts: Self::count_words(&content, pattern),
 		})
 	}
 
@@ -44,8 +38,8 @@ impl StreamWordCount {
 		self.from.label()
 	}
 
-	fn count_words(s: &str) -> UstrMap<usize> {
-		let tokens = WORD_REGEX.find_iter(&s).map(|m| m.as_str());
+	fn count_words(s: &str, pattern: &'static Regex) -> UstrMap<usize> {
+		let tokens = pattern.find_iter(&s).map(|m| m.as_str());
 		let counts = tokens.fold(UstrMap::default(), |mut a, c| {
 			*a.entry(ustr(c)).or_insert(0) += 1;
 			a
@@ -101,51 +95,13 @@ impl TotalCount {
 
 #[cfg(test)]
 mod tests {
+	use crate::regexes::WORD_REGEX;
+
 	use super::*;
 
 	#[test]
-	fn regex1() {
-		let rres: Vec<_> = WORD_REGEX
-			.find_iter("lorem ipsum dolor")
-			.map(|m| m.as_str())
-			.collect();
-
-		assert_eq!(rres, vec!["lorem", "ipsum", "dolor"]);
-	}
-
-	#[test]
-	fn regex2() {
-		let rres: Vec<_> = WORD_REGEX
-			.find_iter("lor.em ips!um 'dolor")
-			.map(|m| m.as_str())
-			.collect();
-
-		assert_eq!(rres, vec!["lor", "em", "ips", "um", "dolor"]);
-	}
-
-	#[test]
-	fn regex3() {
-		let rres: Vec<_> = WORD_REGEX
-			.find_iter("lorem ipsum dol_3or")
-			.map(|m| m.as_str())
-			.collect();
-
-		assert_eq!(rres, vec!["lorem", "ipsum", "dol", "3or"]);
-	}
-
-	#[test]
-	fn regex4() {
-		let rres: Vec<_> = WORD_REGEX
-			.find_iter("123  1,23 1_2 2d3")
-			.map(|m| m.as_str())
-			.collect();
-
-		assert_eq!(rres, vec!["123", "1", "23", "1", "2", "2d3"]);
-	}
-
-	#[test]
 	fn word_count1() {
-		let res = StreamWordCount::count_words("lorem ipsum dolor");
+		let res = StreamWordCount::count_words("lorem ipsum dolor", &WORD_REGEX);
 
 		assert_eq!(res[&ustr("lorem")], 1);
 		assert_eq!(res[&ustr("ipsum")], 1);
@@ -154,8 +110,10 @@ mod tests {
 
 	#[test]
 	fn word_count2() {
-		let res =
-			StreamWordCount::count_words("lorem dolor ipsum dolor. lorem? dolor dolor");
+		let res = StreamWordCount::count_words(
+			"lorem dolor ipsum dolor. lorem? dolor dolor",
+			&WORD_REGEX,
+		);
 
 		assert_eq!(res[&ustr("lorem")], 2);
 		assert_eq!(res[&ustr("ipsum")], 1);
