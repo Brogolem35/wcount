@@ -5,7 +5,6 @@ mod result;
 mod stream;
 use std::{io, process::exit};
 
-use args::TotalColumn;
 use clap::Parser;
 use count::*;
 use regexes::DEFAULT_REGEX;
@@ -41,21 +40,15 @@ fn main() {
 	let mut res: Vec<ResultItem> = Vec::new();
 	res.append(&mut scounts);
 
+	let display_total = cargs.total_column.should_display(scounts.len());
+
 	let mut wtr = csv::Writer::from_writer(io::stdout());
 	wtr.write_field("word")
 		.expect("Could not output the result");
 
-	match cargs.total_column {
-		TotalColumn::Enabled => {
-			if res.len() > 1 {
-				wtr.write_field(&cargs.total)
-					.expect("Could not output the result")
-			}
-		}
-		TotalColumn::Disabled => (),
-		TotalColumn::Force => wtr
-			.write_field(&cargs.total)
-			.expect("Could not output the result"),
+	if display_total {
+		wtr.write_field(&cargs.total)
+			.expect("Could not output the result");
 	}
 
 	wtr.write_record(res.iter().map(|r| r.label()))
@@ -78,17 +71,9 @@ fn main() {
 		wtr.write_field(word.as_str())
 			.expect("Could not output the result");
 
-		match cargs.total_column {
-			TotalColumn::Enabled => {
-				if res.len() > 1 {
-					wtr.write_field(&count.to_string())
-						.expect("Could not output the result")
-				}
-			}
-			TotalColumn::Disabled => (),
-			TotalColumn::Force => wtr
-				.write_field(&count.to_string())
-				.expect("Could not output the result"),
+		if display_total {
+			wtr.write_field(count.to_string())
+				.expect("Could not output the result");
 		}
 
 		wtr.write_record(res.iter().map(|r| r.count(&word).to_string()))

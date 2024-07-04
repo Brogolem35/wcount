@@ -7,6 +7,22 @@ pub enum TotalColumn {
 	Force,
 }
 
+impl TotalColumn {
+	pub fn should_display(&self, count: usize) -> bool {
+		match self {
+			TotalColumn::Enabled => {
+				if count > 1 {
+					true
+				} else {
+					false
+				}
+			}
+			TotalColumn::Disabled => false,
+			TotalColumn::Force => true,
+		}
+	}
+}
+
 #[derive(Debug, Parser)]
 #[clap(version)]
 pub struct Cli {
