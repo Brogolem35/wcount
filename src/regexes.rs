@@ -2,7 +2,7 @@ use once_cell::sync::Lazy;
 use regex::Regex;
 
 pub static DEFAULT_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
+	Lazy::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|'|-)*").unwrap());
 
 #[cfg(test)]
 mod tests {
@@ -46,5 +46,15 @@ mod tests {
 			.collect();
 
 		assert_eq!(rres, vec!["123", "1", "23", "1", "2", "2d3"]);
+	}
+
+        #[test]
+	fn regex5() {
+		let rres: Vec<_> = DEFAULT_REGEX
+			.find_iter("ömür ğğğ 式 2d3")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, vec!["ömür", "ğğğ", "式", "2d3"]);
 	}
 }
