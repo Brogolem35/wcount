@@ -1,4 +1,7 @@
-use std::{collections::HashMap, hash::{BuildHasher, Hash, Hasher}};
+use std::{
+	collections::HashMap,
+	hash::{BuildHasher, Hash, Hasher},
+};
 
 use once_cell::sync::Lazy;
 use regex::Regex;
@@ -11,6 +14,7 @@ static WORD_REGEX: Lazy<Regex> =
 
 pub struct StreamWordCount {
 	pub from: Stream,
+	pub pattern: &'static Regex,
 	pub counts: UstrMap<usize>,
 }
 
@@ -20,6 +24,7 @@ impl StreamWordCount {
 
 		Some(StreamWordCount {
 			from: stream,
+			pattern: &WORD_REGEX,
 			counts: Self::count_words(&content),
 		})
 	}
