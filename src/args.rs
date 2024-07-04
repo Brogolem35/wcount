@@ -21,7 +21,7 @@ pub struct Cli {
 	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
 	pub total_column: TotalColumn,
 
-	/// Number of rows of words and their counts to be displayed
+	/// Number of rows of words and their counts to be displayed, unlimited for 0
 	#[arg(short, long, default_value_t = 50, value_name = "ROW_COUNT")]
 	pub row_count: usize,
 
