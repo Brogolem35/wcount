@@ -8,6 +8,7 @@ use clap::Parser;
 use count::*;
 use result::ResultItem;
 use stream::Stream;
+use ustr::Ustr;
 
 fn main() {
 	let cargs = args::Cli::parse(); // CLI arguments
@@ -43,10 +44,23 @@ fn main() {
 	wtr.write_record(res.iter().map(|r| r.label()))
 		.expect("Could not output the result");
 
-	for word in total.to_ordered_vec().iter().map(|(s, _)| s) {
+	let words_to_print: Vec<Ustr> = if cargs.row_count == 0 {
+		total.to_ordered_vec()
+			.iter()
+			.map(|(s, _)| s.clone())
+			.collect()
+	} else {
+		total.to_ordered_vec()
+			.iter()
+			.map(|(s, _)| s.clone())
+			.take(cargs.row_count)
+			.collect()
+	};
+
+	for word in words_to_print {
 		wtr.write_field(word.as_str())
 			.expect("Could not output the result");
-		wtr.write_record(res.iter().map(|r| r.count(word).to_string()))
+		wtr.write_record(res.iter().map(|r| r.count(&word).to_string()))
 			.expect("Could not output the result");
 	}
 
