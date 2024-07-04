@@ -95,13 +95,13 @@ impl TotalCount {
 
 #[cfg(test)]
 mod tests {
-	use crate::regexes::WORD_REGEX;
+	use crate::regexes::DEFAULT_REGEX;
 
 	use super::*;
 
 	#[test]
 	fn word_count1() {
-		let res = StreamWordCount::count_words("lorem ipsum dolor", &WORD_REGEX);
+		let res = StreamWordCount::count_words("lorem ipsum dolor", &DEFAULT_REGEX);
 
 		assert_eq!(res[&ustr("lorem")], 1);
 		assert_eq!(res[&ustr("ipsum")], 1);
@@ -112,7 +112,7 @@ mod tests {
 	fn word_count2() {
 		let res = StreamWordCount::count_words(
 			"lorem dolor ipsum dolor. lorem? dolor dolor",
-			&WORD_REGEX,
+			&DEFAULT_REGEX,
 		);
 
 		assert_eq!(res[&ustr("lorem")], 2);

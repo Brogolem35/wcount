@@ -1,7 +1,7 @@
 use once_cell::sync::Lazy;
 use regex::Regex;
 
-pub static WORD_REGEX: Lazy<Regex> =
+pub static DEFAULT_REGEX: Lazy<Regex> =
 	Lazy::new(|| Regex::new(r"[a-zA-Z0-9]([a-zA-Z0-9]|'|-)*").unwrap());
 
 #[cfg(test)]
@@ -10,7 +10,7 @@ mod tests {
 
 	#[test]
 	fn regex1() {
-		let rres: Vec<_> = WORD_REGEX
+		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("lorem ipsum dolor")
 			.map(|m| m.as_str())
 			.collect();
@@ -20,7 +20,7 @@ mod tests {
 
 	#[test]
 	fn regex2() {
-		let rres: Vec<_> = WORD_REGEX
+		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("lor.em ips!um 'dolor")
 			.map(|m| m.as_str())
 			.collect();
@@ -30,7 +30,7 @@ mod tests {
 
 	#[test]
 	fn regex3() {
-		let rres: Vec<_> = WORD_REGEX
+		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("lorem ipsum dol_3or")
 			.map(|m| m.as_str())
 			.collect();
@@ -40,7 +40,7 @@ mod tests {
 
 	#[test]
 	fn regex4() {
-		let rres: Vec<_> = WORD_REGEX
+		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("123  1,23 1_2 2d3")
 			.map(|m| m.as_str())
 			.collect();

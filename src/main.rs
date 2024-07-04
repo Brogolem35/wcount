@@ -7,7 +7,7 @@ use std::{io, process::exit};
 
 use clap::Parser;
 use count::*;
-use regexes::WORD_REGEX;
+use regexes::DEFAULT_REGEX;
 use result::ResultItem;
 use stream::Stream;
 use ustr::Ustr;
@@ -31,7 +31,7 @@ fn main() {
 
 	let counts: Vec<_> = streams
 		.into_iter()
-		.filter_map(|s| StreamWordCount::from_stream(s, &WORD_REGEX))
+		.filter_map(|s| StreamWordCount::from_stream(s, &DEFAULT_REGEX))
 		.collect();
 
 	let total = TotalCount::from_counts(counts.iter());
