@@ -9,7 +9,7 @@ mod tests {
 	use super::*;
 
 	#[test]
-	fn regex1() {
+	fn default1() {
 		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("lorem ipsum dolor")
 			.map(|m| m.as_str())
@@ -19,7 +19,7 @@ mod tests {
 	}
 
 	#[test]
-	fn regex2() {
+	fn default2() {
 		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("lor.em ips!um 'dolor")
 			.map(|m| m.as_str())
@@ -29,7 +29,7 @@ mod tests {
 	}
 
 	#[test]
-	fn regex3() {
+	fn default3() {
 		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("lorem ipsum dol_3or")
 			.map(|m| m.as_str())
@@ -39,7 +39,7 @@ mod tests {
 	}
 
 	#[test]
-	fn regex4() {
+	fn default4() {
 		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("123  1,23 1_2 2d3")
 			.map(|m| m.as_str())
@@ -49,7 +49,7 @@ mod tests {
 	}
 
         #[test]
-	fn regex5() {
+	fn default5() {
 		let rres: Vec<_> = DEFAULT_REGEX
 			.find_iter("ömür ğğğ 式 2d3")
 			.map(|m| m.as_str())
