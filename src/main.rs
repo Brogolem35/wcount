@@ -5,6 +5,7 @@ mod result;
 mod stream;
 use std::{io, process::exit};
 
+use args::TotalColumn;
 use clap::Parser;
 use count::*;
 use regexes::DEFAULT_REGEX;
@@ -37,31 +38,59 @@ fn main() {
 	let total = TotalCount::from_counts(counts.iter());
 	let mut scounts: Vec<_> = counts.into_iter().map(|s| ResultItem::Stream(s)).collect();
 
-	let mut res = vec![ResultItem::Total(total.clone())];
+	let mut res: Vec<ResultItem> = Vec::new();
 	res.append(&mut scounts);
 
 	let mut wtr = csv::Writer::from_writer(io::stdout());
 	wtr.write_field("word")
 		.expect("Could not output the result");
+
+	match cargs.total_column {
+		TotalColumn::Enabled => {
+			if res.len() > 1 {
+				wtr.write_field(&cargs.total)
+					.expect("Could not output the result")
+			}
+		}
+		TotalColumn::Disabled => (),
+		TotalColumn::Force => wtr
+			.write_field(&cargs.total)
+			.expect("Could not output the result"),
+	}
+
 	wtr.write_record(res.iter().map(|r| r.label()))
 		.expect("Could not output the result");
 
-	let words_to_print: Vec<Ustr> = if cargs.row_count == 0 {
+	let words_to_print: Vec<(Ustr, usize)> = if cargs.row_count == 0 {
 		total.to_ordered_vec()
 			.iter()
-			.map(|(s, _)| s.clone())
+			.map(|(s, i)| (s.clone(), i.clone()))
 			.collect()
 	} else {
 		total.to_ordered_vec()
 			.iter()
-			.map(|(s, _)| s.clone())
+			.map(|(s, i)| (s.clone(), i.clone()))
 			.take(cargs.row_count)
 			.collect()
 	};
 
-	for word in words_to_print {
+	for (word, count) in words_to_print {
 		wtr.write_field(word.as_str())
 			.expect("Could not output the result");
+
+		match cargs.total_column {
+			TotalColumn::Enabled => {
+				if res.len() > 1 {
+					wtr.write_field(&count.to_string())
+						.expect("Could not output the result")
+				}
+			}
+			TotalColumn::Disabled => (),
+			TotalColumn::Force => wtr
+				.write_field(&count.to_string())
+				.expect("Could not output the result"),
+		}
+
 		wtr.write_record(res.iter().map(|r| r.count(&word).to_string()))
 			.expect("Could not output the result");
 	}
