@@ -94,7 +94,7 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--total-clabel",
+			"--total-label",
 			"custom_label",
 		]);
 
