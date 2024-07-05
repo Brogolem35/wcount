@@ -1,6 +1,6 @@
 use std::{
 	collections::HashMap,
-	hash::{BuildHasher, Hash, Hasher},
+	hash::{BuildHasher, Hash},
 };
 
 use regex::Regex;
