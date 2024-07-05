@@ -1,14 +1,12 @@
 mod args;
 mod count;
 mod regexes;
-mod result;
 mod stream;
 use std::{io, process::exit};
 
 use clap::Parser;
 use count::*;
 use regexes::DEFAULT_REGEX;
-use result::ResultItem;
 use stream::Stream;
 use ustr::Ustr;
 
