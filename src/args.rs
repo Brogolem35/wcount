@@ -31,7 +31,7 @@ pub struct Cli {
 
 	/// Custom label for the `total_count` column
 	#[arg(short, long, default_value_t = {"total_count".to_string()}, value_name = "COLUMN_LABEL")]
-	pub total: String,
+	pub total_label: String,
 
 	/// Control the `total_count` column output
 	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
@@ -65,7 +65,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
@@ -81,7 +81,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert!(cli.files.is_empty());
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
@@ -94,14 +94,14 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--total",
+			"--total-clabel",
 			"custom_label",
 		]);
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "custom_label");
+		assert_eq!(cli.total_label, "custom_label");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
@@ -120,7 +120,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Disabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
@@ -139,7 +139,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Force));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
@@ -158,7 +158,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(cli.werror);
 		assert_eq!(cli.row_count, 50);
@@ -178,7 +178,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 75);
@@ -198,7 +198,7 @@ mod tests {
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
-		assert_eq!(cli.total, "total_count");
+		assert_eq!(cli.total_label, "total_count");
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 250);

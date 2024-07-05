@@ -47,7 +47,7 @@ fn main() {
 		.expect("Could not output the result");
 
 	if display_total {
-		wtr.write_field(&cargs.total)
+		wtr.write_field(&cargs.total_label)
 			.expect("Could not output the result");
 	}
 
