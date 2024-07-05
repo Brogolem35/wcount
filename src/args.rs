@@ -42,7 +42,7 @@ pub struct Cli {
 	pub row_count: usize,
 
 	/// Close the process at any warning
-	#[arg(short, long)]
+	#[arg(long)]
 	pub werror: bool,
 }
 
