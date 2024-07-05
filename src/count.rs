@@ -47,6 +47,10 @@ impl StreamWordCount {
 
 		counts
 	}
+
+	pub fn count(&self, s: &Ustr) -> usize {
+		self.counts.get(s).unwrap_or(&0).clone()
+	}
 }
 
 #[derive(Clone)]

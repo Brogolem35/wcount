@@ -35,12 +35,8 @@ fn main() {
 		.collect();
 
 	let total = TotalCount::from_counts(counts.iter());
-	let mut scounts: Vec<_> = counts.into_iter().map(|s| ResultItem::Stream(s)).collect();
 
-	let mut res: Vec<ResultItem> = Vec::new();
-	res.append(&mut scounts);
-
-	let display_total = cargs.total_column.should_display(scounts.len());
+	let display_total = cargs.total_column.should_display(counts.len());
 
 	let mut wtr = csv::Writer::from_writer(io::stdout());
 	wtr.write_field("word")
@@ -51,7 +47,7 @@ fn main() {
 			.expect("Could not output the result");
 	}
 
-	wtr.write_record(res.iter().map(|r| r.label()))
+	wtr.write_record(counts.iter().map(|r| r.label()))
 		.expect("Could not output the result");
 
 	let words_to_print: Vec<(Ustr, usize)> = if cargs.row_count == 0 {
@@ -76,7 +72,7 @@ fn main() {
 				.expect("Could not output the result");
 		}
 
-		wtr.write_record(res.iter().map(|r| r.count(&word).to_string()))
+		wtr.write_record(counts.iter().map(|r| r.count(&word).to_string()))
 			.expect("Could not output the result");
 	}
 
