@@ -76,10 +76,7 @@ fn main() {
 	}
 
 	let words_to_print: Vec<(Ustr, usize)> = if cargs.row_count == 0 {
-		total_counts
-			.iter()
-			.map(|(s, i)| (*s, *i))
-			.collect()
+		total_counts.iter().map(|(s, i)| (*s, *i)).collect()
 	} else {
 		total_counts
 			.iter()
