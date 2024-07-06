@@ -77,6 +77,10 @@ pub struct Cli {
 	#[arg(short, long, value_enum ,default_value_t = {WordRegex::All})]
 	pub pattern: WordRegex,
 
+	/// Show the results in ascending order, instead of descending
+	#[arg(short, long, default_value_t = false)]
+	pub reverse: bool,
+
 	/// Close the process at any warning
 	#[arg(short = 'W', long)]
 	pub werror: bool,
