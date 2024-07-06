@@ -14,12 +14,16 @@ pub struct StreamWordCount {
 }
 
 impl StreamWordCount {
-	pub fn from_stream(mut stream: Stream, pattern: &'static Regex) -> Option<Self> {
+	pub fn from_stream(
+		mut stream: Stream,
+		pattern: &'static Regex,
+		case_sensitive: bool,
+	) -> Option<Self> {
 		let content = stream.read_to_string()?;
 
 		Some(StreamWordCount {
 			from: stream,
-			counts: Self::count_words(&content, pattern),
+			counts: Self::count_words(&content, pattern, case_sensitive),
 		})
 	}
 
@@ -38,8 +42,14 @@ impl StreamWordCount {
 		self.from.label()
 	}
 
-	fn count_words(s: &str, pattern: &'static Regex) -> UstrMap<usize> {
-		let tokens = pattern.find_iter(&s).map(|m| m.as_str());
+	fn count_words(s: &str, pattern: &'static Regex, case_sensitive: bool) -> UstrMap<usize> {
+		let text = if case_sensitive {
+			s.to_string()
+		} else {
+			s.to_lowercase()
+		};
+
+		let tokens = pattern.find_iter(&text).map(|m| m.as_str());
 		let counts = tokens.fold(UstrMap::default(), |mut a, c| {
 			*a.entry(ustr(c)).or_insert(0) += 1;
 			a
@@ -105,7 +115,7 @@ mod tests {
 
 	#[test]
 	fn word_count1() {
-		let res = StreamWordCount::count_words("lorem ipsum dolor", &DEFAULT_REGEX);
+		let res = StreamWordCount::count_words("lorem ipsum dolor", &DEFAULT_REGEX, false);
 
 		assert_eq!(res[&ustr("lorem")], 1);
 		assert_eq!(res[&ustr("ipsum")], 1);
@@ -117,11 +127,48 @@ mod tests {
 		let res = StreamWordCount::count_words(
 			"lorem dolor ipsum dolor. lorem? dolor dolor",
 			&DEFAULT_REGEX,
+			false,
 		);
 
 		assert_eq!(res[&ustr("lorem")], 2);
 		assert_eq!(res[&ustr("ipsum")], 1);
 		assert_eq!(res[&ustr("dolor")], 4);
+	}
+
+	#[test]
+	fn word_count3() {
+		let res = StreamWordCount::count_words(
+			"Lorem dolor Ipsum dolor. lorem? Dolor dolor",
+			&DEFAULT_REGEX,
+			false,
+		);
+
+		println!(
+			"{}",
+			"Lorem dolor Ipsum dolor. lorem? Dolor dolor".to_lowercase()
+		);
+		for (w, c) in res.iter() {
+			println!("{} {}", w, c);
+		}
+
+		assert_eq!(res[&ustr("lorem")], 2);
+		assert_eq!(res[&ustr("ipsum")], 1);
+		assert_eq!(res[&ustr("dolor")], 4);
+	}
+
+	#[test]
+	fn word_count4() {
+		let res = StreamWordCount::count_words(
+			"Lorem dolor Ipsum dolor. lorem? Dolor dolor",
+			&DEFAULT_REGEX,
+			true,
+		);
+
+		assert_eq!(res[&ustr("lorem")], 1);
+		assert_eq!(res[&ustr("Lorem")], 1);
+		assert_eq!(res.get(&ustr("ipsum")).unwrap_or(&0).clone(), 0);
+		assert_eq!(res[&ustr("dolor")], 3);
+		assert_eq!(res[&ustr("Dolor")], 1);
 	}
 
 	#[test]
