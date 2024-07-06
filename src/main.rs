@@ -6,7 +6,6 @@ use std::{io, process::exit};
 
 use clap::Parser;
 use count::*;
-use regexes::ALL_REGEX;
 use stream::Stream;
 use ustr::Ustr;
 
