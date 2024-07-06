@@ -41,6 +41,10 @@ pub struct Cli {
 	#[arg(short, long, default_value_t = 50, value_name = "ROW_COUNT")]
 	pub row_count: usize,
 
+	/// Case sensitivity, results will be displayed in lower case if false
+	#[arg(short, long, default_value_t = false)]
+	pub case_sensitive: bool,
+
 	/// Close the process at any warning
 	#[arg(long)]
 	pub werror: bool,
@@ -69,6 +73,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -85,6 +90,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -105,6 +111,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -124,6 +131,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Disabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -143,6 +151,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Force));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -162,6 +171,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(cli.werror);
 		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -182,6 +192,7 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 75);
+		assert!(!cli.case_sensitive);
 	}
 
 	#[test]
@@ -202,5 +213,26 @@ mod tests {
 		assert!(matches!(cli.total_column, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 250);
+		assert!(!cli.case_sensitive);
+	}
+
+	#[test]
+	fn case_sensitive() {
+		let cmd = Cli::command();
+		let matches = cmd.get_matches_from(vec![
+			"wcount", // executable name
+			"file1.txt",
+			"file2.txt",
+			"--case-sensitive",
+		]);
+
+		let cli = Cli::from_arg_matches(&matches).unwrap();
+
+		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
+		assert_eq!(cli.total_label, "total_count");
+		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(!cli.werror);
+		assert_eq!(cli.row_count, 50);
+		assert!(cli.case_sensitive);
 	}
 }
