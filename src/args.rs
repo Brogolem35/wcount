@@ -110,6 +110,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -127,6 +128,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -148,6 +150,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -168,6 +171,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -188,6 +192,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -208,6 +213,7 @@ mod tests {
 		assert!(cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -229,6 +235,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 75);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -238,7 +245,7 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"-r",
+			"--row-count",
 			"250",
 		]);
 
@@ -250,6 +257,7 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 250);
 		assert!(!cli.case_sensitive);
+		assert!(!cli.reverse);
 	}
 
 	#[test]
@@ -270,5 +278,27 @@ mod tests {
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(cli.case_sensitive);
+		assert!(!cli.reverse);
+	}
+
+	#[test]
+	fn reverse() {
+		let cmd = Cli::command();
+		let matches = cmd.get_matches_from(vec![
+			"wcount", // executable name
+			"file1.txt",
+			"file2.txt",
+			"--reverse",
+		]);
+
+		let cli = Cli::from_arg_matches(&matches).unwrap();
+
+		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
+		assert_eq!(cli.total_label, "total_count");
+		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(!cli.werror);
+		assert_eq!(cli.row_count, 50);
+		assert!(!cli.case_sensitive);
+		assert!(cli.reverse);
 	}
 }
