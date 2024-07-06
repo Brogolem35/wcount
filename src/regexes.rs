@@ -7,8 +7,9 @@ pub static ALL_REGEX: Lazy<Regex> =
 pub static ALPHANUMERIC_REGEX: Lazy<Regex> =
 	Lazy::new(|| Regex::new(r"(\p{Alphabetic}|\d)+").unwrap());
 
-pub static ALPHA_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"(\p{Alphabetic})+").unwrap());
+pub static ALPHA_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\p{Alphabetic})+").unwrap());
+
+pub static NUMERIC_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d)+").unwrap());
 
 #[cfg(test)]
 mod tests {
@@ -182,5 +183,65 @@ mod tests {
 			.collect();
 
 		assert_eq!(rres, vec!["lorem", "ip", "sum", "dol", "or"]);
+	}
+
+	#[test]
+	fn numeric1() {
+		let rres: Vec<_> = NUMERIC_REGEX
+			.find_iter("lorem ipsum dolor")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, Vec::<&str>::new());
+	}
+
+	#[test]
+	fn numeric2() {
+		let rres: Vec<_> = NUMERIC_REGEX
+			.find_iter("lor.em ips!um 'dolor")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, Vec::<&str>::new());
+	}
+
+	#[test]
+	fn numeric3() {
+		let rres: Vec<_> = NUMERIC_REGEX
+			.find_iter("lorem ipsum dol_3or")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, vec!["3"]);
+	}
+
+	#[test]
+	fn numeric4() {
+		let rres: Vec<_> = NUMERIC_REGEX
+			.find_iter("123  1,23 1_2 2d3")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, vec!["123", "1", "23", "1", "2", "2", "3"]);
+	}
+
+	#[test]
+	fn numeric5() {
+		let rres: Vec<_> = NUMERIC_REGEX
+			.find_iter("ömür ğğğ 式 2d3")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, vec!["2", "3"]);
+	}
+
+	#[test]
+	fn numeric6() {
+		let rres: Vec<_> = NUMERIC_REGEX
+			.find_iter("lorem ip-sum dol3'or")
+			.map(|m| m.as_str())
+			.collect();
+
+		assert_eq!(rres, vec!["3"]);
 	}
 }
