@@ -1,6 +1,10 @@
 use clap::{Parser, ValueEnum};
 use regex::Regex;
 
+use crate::regexes::{
+	ALL_REGEX, ALPHANUMERIC_REGEX, ALPHA_REGEX, NOAPOSTROPHE_REGEX, NODASH_REGEX, NUMERIC_REGEX,
+};
+
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum TotalColumn {
 	Enabled,
@@ -37,12 +41,12 @@ pub enum WordRegex {
 impl WordRegex {
 	fn to_regex(&self) -> &'static Regex {
 		match self {
-			WordRegex::All => todo!(),
-			WordRegex::OnlyAlphanumeric => todo!(),
-			WordRegex::OnlyAlphabetic => todo!(),
-			WordRegex::OnlyNumeric => todo!(),
-			WordRegex::NoDash => todo!(),
-			WordRegex::NoApostrophe => todo!(),
+			WordRegex::All => &ALL_REGEX,
+			WordRegex::OnlyAlphanumeric => &ALPHANUMERIC_REGEX,
+			WordRegex::OnlyAlphabetic => &ALPHA_REGEX,
+			WordRegex::OnlyNumeric => &NUMERIC_REGEX,
+			WordRegex::NoDash => &NODASH_REGEX,
+			WordRegex::NoApostrophe => &NOAPOSTROPHE_REGEX,
 		}
 	}
 }
