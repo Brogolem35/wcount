@@ -46,7 +46,7 @@ pub struct Cli {
 	pub case_sensitive: bool,
 
 	/// Close the process at any warning
-	#[arg(long)]
+	#[arg(short = 'W', long)]
 	pub werror: bool,
 }
 
