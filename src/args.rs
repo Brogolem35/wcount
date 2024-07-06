@@ -39,7 +39,7 @@ pub enum WordRegex {
 }
 
 impl WordRegex {
-	fn to_regex(&self) -> &'static Regex {
+	pub fn to_regex(&self) -> &'static Regex {
 		match self {
 			WordRegex::All => &ALL_REGEX,
 			WordRegex::OnlyAlphanumeric => &ALPHANUMERIC_REGEX,
