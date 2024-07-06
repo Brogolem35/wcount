@@ -45,7 +45,7 @@ impl Stream {
 		match self {
 			Stream::Stdin(si) => {
 				if si.read_to_string(&mut buf).is_err() {
-					eprintln!("{}: invalid UTF-8", "-");
+					eprintln!("-: invalid UTF-8");
 					return None;
 				}
 			}
