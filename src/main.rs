@@ -45,7 +45,13 @@ fn main() {
 
 	let counts: Vec<_> = streams
 		.into_iter()
-		.filter_map(|s| StreamWordCount::from_stream(s, &ALL_REGEX, cargs.case_sensitive))
+		.filter_map(|s| {
+			StreamWordCount::from_stream(
+				s,
+				cargs.pattern.to_regex(),
+				cargs.case_sensitive,
+			)
+		})
 		.collect();
 
 	let total = TotalCount::from_counts(counts.iter());
