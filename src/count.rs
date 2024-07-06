@@ -31,7 +31,7 @@ impl StreamWordCount {
 		let mut res: Vec<_> = self
 			.counts
 			.iter()
-			.map(|(s, i)| (s.clone(), i.clone()))
+			.map(|(s, i)| (*s, *i))
 			.collect();
 		res.sort_by(|(_, a), (_, b)| a.cmp(b));
 
@@ -59,7 +59,7 @@ impl StreamWordCount {
 	}
 
 	pub fn count(&self, s: &Ustr) -> usize {
-		self.counts.get(s).unwrap_or(&0).clone()
+		*self.counts.get(s).unwrap_or(&0)
 	}
 }
 
@@ -90,7 +90,7 @@ impl TotalCount {
 		let mut res: Vec<_> = self
 			.counts
 			.iter()
-			.map(|(s, i)| (s.clone(), i.clone()))
+			.map(|(s, i)| (*s, *i))
 			.collect();
 		res.sort_by(|(_, a), (_, b)| a.cmp(b).reverse());
 
