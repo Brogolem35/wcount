@@ -70,13 +70,19 @@ fn main() {
 	wtr.write_record(counts.iter().map(|r| r.label()))
 		.expect("Could not output the result");
 
+	let mut total_counts = total.to_ordered_vec();
+
+	if cargs.reverse {
+		total_counts.reverse();
+	}
+
 	let words_to_print: Vec<(Ustr, usize)> = if cargs.row_count == 0 {
-		total.to_ordered_vec()
+		total_counts
 			.iter()
 			.map(|(s, i)| (s.clone(), i.clone()))
 			.collect()
 	} else {
-		total.to_ordered_vec()
+		total_counts
 			.iter()
 			.map(|(s, i)| (s.clone(), i.clone()))
 			.take(cargs.row_count)
