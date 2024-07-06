@@ -66,7 +66,7 @@ pub struct Cli {
 	pub total_column: TotalColumn,
 
 	/// Number of rows of words and their counts to be displayed, unlimited for 0
-	#[arg(short, long, default_value_t = 50, value_name = "ROW_COUNT")]
+	#[arg(long, default_value_t = 50, value_name = "ROW_COUNT")]
 	pub row_count: usize,
 
 	/// Case sensitivity, results will be displayed in lower case if false
