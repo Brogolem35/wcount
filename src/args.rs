@@ -57,25 +57,25 @@ pub struct Cli {
 	/// Files that the words will be counted from
 	pub files: Vec<String>,
 
-	/// Custom label for the `total_count` column
-	#[arg(short, long, default_value_t = {"total_count".to_string()}, value_name = "COLUMN_LABEL")]
-	pub total_label: String,
-
-	/// Control the `total_count` column output
-	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
-	pub total_column: TotalColumn,
-
-	/// Number of rows of words and their counts to be displayed, unlimited for 0
-	#[arg(long, default_value_t = 50, value_name = "ROW_COUNT")]
-	pub row_count: usize,
-
 	/// Case sensitivity, results will be displayed in lower case if false
 	#[arg(short, long, default_value_t = false)]
 	pub case_sensitive: bool,
 
 	/// Pattern to match for words
-	#[arg(short, long, value_enum ,default_value_t = {WordRegex::All})]
+	#[arg(long, value_enum ,default_value_t = {WordRegex::All})]
 	pub pattern: WordRegex,
+
+	/// Number of rows of words and their counts to be displayed, unlimited for 0
+	#[arg(long, default_value_t = 50, value_name = "ROW_COUNT")]
+	pub row_count: usize,
+
+	/// Control the `total_count` column output
+	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
+	pub total_column: TotalColumn,
+
+	/// Custom label for the `total_count` column
+	#[arg(long, default_value_t = {"total_count".to_string()}, value_name = "COLUMN_LABEL")]
+	pub total_label: String,
 
 	/// Show the results in ascending order, instead of descending
 	#[arg(short, long, default_value_t = false)]
