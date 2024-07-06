@@ -15,13 +15,7 @@ pub enum TotalColumn {
 impl TotalColumn {
 	pub fn should_display(&self, count: usize) -> bool {
 		match self {
-			TotalColumn::Enabled => {
-				if count > 1 {
-					true
-				} else {
-					false
-				}
-			}
+			TotalColumn::Enabled => count > 1,
 			TotalColumn::Disabled => false,
 			TotalColumn::Force => true,
 		}
