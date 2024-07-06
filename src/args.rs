@@ -1,4 +1,5 @@
 use clap::{Parser, ValueEnum};
+use regex::Regex;
 
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum TotalColumn {
@@ -19,6 +20,29 @@ impl TotalColumn {
 			}
 			TotalColumn::Disabled => false,
 			TotalColumn::Force => true,
+		}
+	}
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum WordRegex {
+	All,
+	OnlyAlphanumeric,
+	OnlyAlphabetic,
+	OnlyNumeric,
+	NoDash,
+	NoApostrophe,
+}
+
+impl WordRegex {
+	fn to_regex(&self) -> &'static Regex {
+		match self {
+			WordRegex::All => todo!(),
+			WordRegex::OnlyAlphanumeric => todo!(),
+			WordRegex::OnlyAlphabetic => todo!(),
+			WordRegex::OnlyNumeric => todo!(),
+			WordRegex::NoDash => todo!(),
+			WordRegex::NoApostrophe => todo!(),
 		}
 	}
 }
@@ -44,6 +68,10 @@ pub struct Cli {
 	/// Case sensitivity, results will be displayed in lower case if false
 	#[arg(short, long, default_value_t = false)]
 	pub case_sensitive: bool,
+
+	/// Pattern to match for words
+	#[arg(short, long, value_enum ,default_value_t = {WordRegex::All})]
+	pub pattern: WordRegex,
 
 	/// Close the process at any warning
 	#[arg(short = 'W', long)]
