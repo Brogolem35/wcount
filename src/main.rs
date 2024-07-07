@@ -87,6 +87,23 @@ fn main() {
 			.collect()
 	};
 
+	let words_to_print: Vec<_> = if let Some(s) = cargs.excluded_words {
+		let exclude_stream = Stream::from_str(&s);
+
+		let exclusions = if let Some(mut s) = exclude_stream {
+			Exclusions::from_stream(&mut s).expect("Can't read --excluded-words file")
+		} else {
+			exit(Return::Error as i32);
+		};
+
+		words_to_print
+			.into_iter()
+			.filter(|(s, _)| !exclusions.contains(s))
+			.collect()
+	} else {
+		words_to_print
+	};
+
 	for (word, count) in words_to_print {
 		wtr.write_field(word.as_str())
 			.expect("Could not output the result");
