@@ -8,12 +8,18 @@ use ustr::{ustr, Ustr, UstrMap};
 
 use crate::stream::Stream;
 
+/// Counts of every word in a stream.
 pub struct StreamWordCount {
+	/// Stream to count from.
 	pub from: Stream,
+	/// Maps word to count.
+	///
+	/// UstrMap is used instead of the regular HashMap to avoid String duplication in the memory and the custom Hasher that avoids access hashing.
 	pub counts: UstrMap<usize>,
 }
 
 impl StreamWordCount {
+	/// Creates StreamWordCount from a `Stream`.
 	pub fn from_stream(
 		mut stream: Stream,
 		pattern: &'static Regex,
@@ -27,6 +33,7 @@ impl StreamWordCount {
 		})
 	}
 
+	/// Returns word to count pairs as a sorted Vec.
 	pub fn to_ordered_vec(&self) -> Vec<(Ustr, usize)> {
 		let mut res: Vec<_> = self.counts.iter().map(|(s, i)| (*s, *i)).collect();
 		res.sort_by(|(_, a), (_, b)| a.cmp(b));
@@ -34,10 +41,12 @@ impl StreamWordCount {
 		res
 	}
 
+	/// Returns the label of the `Stream`.
 	pub fn label(&self) -> String {
 		self.from.label()
 	}
 
+	/// Counts every string slice, that is recognised as a word by the `pattern`, and returns the counts as a UstrMap.
 	fn count_words(s: &str, pattern: &'static Regex, case_sensitive: bool) -> UstrMap<usize> {
 		let text = if case_sensitive {
 			s.to_string()
@@ -54,6 +63,7 @@ impl StreamWordCount {
 		counts
 	}
 
+	/// Returns the count of the word `s`.
 	pub fn count(&self, s: &Ustr) -> usize {
 		*self.counts.get(s).unwrap_or(&0)
 	}
