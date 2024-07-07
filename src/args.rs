@@ -22,6 +22,7 @@ impl TotalColumn {
 	}
 }
 
+/// Represents possible regular expressions a user can choose.
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum WordRegex {
 	All,
@@ -33,6 +34,7 @@ pub enum WordRegex {
 }
 
 impl WordRegex {
+	/// Returns corresponding Regex.
 	pub fn to_regex(self) -> &'static Regex {
 		match self {
 			WordRegex::All => &ALL_REGEX,
