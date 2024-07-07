@@ -59,18 +59,6 @@ fn main() {
 
 	let display_total = cargs.total_column.should_display(counts.len());
 
-	let mut wtr = csv::Writer::from_writer(io::stdout());
-	wtr.write_field("word")
-		.expect("Could not output the result");
-
-	if display_total {
-		wtr.write_field(&cargs.total_label)
-			.expect("Could not output the result");
-	}
-
-	wtr.write_record(counts.iter().map(|r| r.label()))
-		.expect("Could not output the result");
-
 	let mut total_counts = total.to_ordered_vec();
 
 	if cargs.reverse {
@@ -103,6 +91,18 @@ fn main() {
 	} else {
 		words_to_print
 	};
+
+	let mut wtr = csv::Writer::from_writer(io::stdout());
+	wtr.write_field("word")
+		.expect("Could not output the result");
+
+	if display_total {
+		wtr.write_field(&cargs.total_label)
+			.expect("Could not output the result");
+	}
+
+	wtr.write_record(counts.iter().map(|r| r.label()))
+		.expect("Could not output the result");
 
 	for (word, count) in words_to_print {
 		wtr.write_field(word.as_str())
