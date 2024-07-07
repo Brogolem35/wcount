@@ -69,7 +69,7 @@ pub struct Cli {
 
 	/// Control the `total_count` column output
 	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled}, value_name = "OPTION")]
-	pub total_column: TotalColumn,
+	pub display_total: TotalColumn,
 
 	/// Custom label for the `total_count` column
 	#[arg(long, default_value_t = {"total_count".to_string()}, value_name = "COLUMN_LABEL")]
@@ -104,7 +104,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
@@ -122,7 +122,7 @@ mod tests {
 
 		assert!(cli.files.is_empty());
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
@@ -144,7 +144,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "custom_label");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
@@ -158,14 +158,14 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--total-column=disabled",
+			"--display-total=disabled",
 		]);
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Disabled));
+		assert!(matches!(cli.display_total, TotalColumn::Disabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
@@ -179,14 +179,14 @@ mod tests {
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--total-column=force",
+			"--display-total=force",
 		]);
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Force));
+		assert!(matches!(cli.display_total, TotalColumn::Force));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
@@ -207,7 +207,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);
@@ -229,7 +229,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 75);
 		assert!(!cli.case_sensitive);
@@ -251,7 +251,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 250);
 		assert!(!cli.case_sensitive);
@@ -272,7 +272,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(cli.case_sensitive);
@@ -293,7 +293,7 @@ mod tests {
 
 		assert_eq!(cli.files, vec!["file1.txt", "file2.txt"]);
 		assert_eq!(cli.total_label, "total_count");
-		assert!(matches!(cli.total_column, TotalColumn::Enabled));
+		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
 		assert!(!cli.case_sensitive);

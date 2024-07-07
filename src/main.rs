@@ -57,7 +57,7 @@ fn main() {
 
 	let total = TotalCount::from_counts(counts.iter());
 
-	let display_total = cargs.total_column.should_display(counts.len());
+	let display_total = cargs.display_total.should_display(counts.len());
 
 	let mut total_counts = total.to_ordered_vec();
 
