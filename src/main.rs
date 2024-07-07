@@ -1,11 +1,13 @@
 mod args;
 mod count;
+mod exclusions;
 mod regexes;
 mod stream;
 use std::{io, process::exit};
 
 use clap::Parser;
 use count::*;
+use exclusions::Exclusions;
 use stream::Stream;
 use ustr::Ustr;
 
