@@ -3,13 +3,21 @@ use std::{
 	io::{self, Read},
 };
 
+/// Represents a stream of string, either from a file or from Stdin.
 #[derive(Debug)]
 pub enum Stream {
+	/// Represents standard input.
 	Stdin(io::Stdin),
+	/// Represents a file.
+	///
+	/// First element is a `File`, the second is the path to the file.
 	File(File, String),
 }
 
 impl Stream {
+	/// Creates a `Stream` from the given string.
+	///
+	/// If the string is equal to `-`, then it is Stdin. If not, then it will be considered as a path to a file.
 	pub fn from_str(path: &str) -> Option<Stream> {
 		if path == "-" {
 			return Some(Stream::Stdin(io::stdin()));
@@ -39,6 +47,9 @@ impl Stream {
 		}
 	}
 
+	/// Reads the `Stream` and returns its contents as a `String`.
+	///
+	/// Can't read invalid UTF-8 content.
 	pub fn read_to_string(&mut self) -> Option<String> {
 		let mut buf = String::new();
 
@@ -60,6 +71,9 @@ impl Stream {
 		Some(buf)
 	}
 
+	/// Returns the label of the `Stream`.
+	///
+	/// Label is `standard_input` for Stdin, and the path of file for the File.
 	pub fn label(&self) -> String {
 		match self {
 			Self::Stdin(_) => String::from("standard_input"),
