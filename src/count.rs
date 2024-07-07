@@ -69,12 +69,14 @@ impl StreamWordCount {
 	}
 }
 
+/// Wrapper around UstrMap that represents the total count of all words.
 #[derive(Clone)]
 pub struct TotalCount {
 	pub counts: UstrMap<usize>,
 }
 
 impl TotalCount {
+	/// Creates and returns a TotalCount from an iterator of counts.
 	pub fn from_counts<'a, I>(swc: I) -> Self
 	where
 		I: Iterator<Item = &'a StreamWordCount>,
@@ -88,10 +90,12 @@ impl TotalCount {
 		TotalCount { counts }
 	}
 
+	/// Adds counts to a already existing `TotalCount`.
 	pub fn add_count(&mut self, swc: &StreamWordCount) {
 		Self::merge_maps(&mut self.counts, &swc.counts);
 	}
 
+	/// Returns word to count pairs as a sorted Vec.
 	pub fn to_ordered_vec(&self) -> Vec<(Ustr, usize)> {
 		let mut res: Vec<_> = self.counts.iter().map(|(s, i)| (*s, *i)).collect();
 		res.sort_by(|(_, a), (_, b)| a.cmp(b).reverse());
@@ -99,6 +103,7 @@ impl TotalCount {
 		res
 	}
 
+	/// Adds the values of the second HashMap to the first one.
 	fn merge_maps<K, H: BuildHasher>(a: &mut HashMap<K, usize, H>, b: &HashMap<K, usize, H>)
 	where
 		K: Eq + Hash + Clone,
