@@ -59,7 +59,7 @@ pub struct Cli {
 	#[arg(long, value_enum ,default_value_t = {WordRegex::All})]
 	pub pattern: WordRegex,
 
-	/// Words to exclude from the counting process
+	/// Words to exclude from the counting process, whitespace seperated
 	#[arg(long, value_name = "FILE")]
 	pub excluded_words: Option<String>,
 
