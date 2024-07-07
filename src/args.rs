@@ -59,6 +59,10 @@ pub struct Cli {
 	#[arg(long, value_enum ,default_value_t = {WordRegex::All})]
 	pub pattern: WordRegex,
 
+	/// Words to exclude from the counting process
+	#[arg(long, value_name = "FILE")]
+	pub excluded_words: Option<String>,
+
 	/// Number of rows of words and their counts to be displayed, unlimited for 0
 	#[arg(long, default_value_t = 50, value_name = "ROW_COUNT")]
 	pub row_count: usize,
