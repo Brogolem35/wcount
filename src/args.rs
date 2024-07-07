@@ -5,14 +5,19 @@ use crate::regexes::{
 	ALL_REGEX, ALPHANUMERIC_REGEX, ALPHA_REGEX, NOAPOSTROPHE_REGEX, NODASH_REGEX, NUMERIC_REGEX,
 };
 
+/// Options for displaying the `total_count` column in the result.
 #[derive(Debug, Clone, Copy, ValueEnum)]
 pub enum TotalColumn {
+	/// Display only if there are more than one stream in the result.
 	Enabled,
+	/// Never display.
 	Disabled,
+	/// Always display.
 	Force,
 }
 
 impl TotalColumn {
+	/// Returns whether the `total_count` column should be displayed depending on the `count` of the streams results.
 	pub fn should_display(&self, count: usize) -> bool {
 		match self {
 			TotalColumn::Enabled => count > 1,
