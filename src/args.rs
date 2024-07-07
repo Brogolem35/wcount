@@ -68,7 +68,7 @@ pub struct Cli {
 	pub row_count: usize,
 
 	/// Control the `total_count` column output
-	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled})]
+	#[arg(long, value_enum, default_value_t = {TotalColumn::Enabled}, value_name = "OPTION")]
 	pub total_column: TotalColumn,
 
 	/// Custom label for the `total_count` column
