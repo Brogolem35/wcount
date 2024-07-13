@@ -23,27 +23,27 @@ impl Stream {
 			return Some(Stream::Stdin(io::stdin()));
 		}
 
-		match fs::metadata(path) {
-			Ok(meta) => {
-				if meta.is_file() {
-					if let Ok(file) = File::open(path) {
-						Some(Stream::File(file, path.to_string()))
-					} else {
-						eprintln!("{}: Error accessing", path);
-						None
-					}
-				} else if meta.is_dir() {
-					eprintln!("{}: Is a directory", path);
-					None
-				} else {
-					eprintln!("{}: Error accessing", path);
-					None
-				}
-			}
+		let meta = match fs::metadata(path) {
+			Ok(meta) => meta,
 			Err(e) => {
 				eprintln!("{}: {}", path, e);
+				return None;
+			}
+		};
+
+		if meta.is_file() {
+			if let Ok(file) = File::open(path) {
+				Some(Stream::File(file, path.to_string()))
+			} else {
+				eprintln!("{}: Error accessing", path);
 				None
 			}
+		} else if meta.is_dir() {
+			eprintln!("{}: Is a directory", path);
+			None
+		} else {
+			eprintln!("{}: Error accessing", path);
+			None
 		}
 	}
 
