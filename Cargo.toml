@@ -3,6 +3,7 @@ name = "wcount"
 version = "0.1.0"
 authors = ["brogolem35"]
 edition = "2021"
+description = "CLI word counting tool."
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
