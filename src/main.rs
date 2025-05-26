@@ -36,10 +36,8 @@ fn main() {
 		exit(Return::Error as i32);
 	}
 
-	if files.len() != streams.len() {
-		if cargs.werror {
-			exit(Return::Warning as i32);
-		}
+	if cargs.werror && warning_printed()  {
+		exit(Return::Warning as i32);
 	}
 
 	let counts: Vec<_> = streams
