@@ -4,7 +4,7 @@ mod exclusions;
 mod regexes;
 mod stream;
 mod warning;
-use std::{io, process::exit};
+use std::{io, process::ExitCode};
 
 use anyhow::{anyhow, Context, Result};
 use clap::Parser;
@@ -20,13 +20,13 @@ enum Return {
 	Error = 2,
 }
 
-fn main() {
+fn main() -> ExitCode {
 	match run() {
 		Ok(_) => match warning_printed() {
-			true => exit(Return::Warning as i32),
-			false => exit(Return::Ok as i32),
+			true => ExitCode::from(Return::Warning as u8),
+			false => ExitCode::from(Return::Ok as u8),
 		},
-		Err(_) => exit(Return::Error as i32),
+		Err(_) => ExitCode::from(Return::Error as u8),
 	}
 }
 
@@ -46,7 +46,7 @@ fn run() -> Result<()> {
 	}
 
 	if cargs.werror && warning_printed() {
-		exit(Return::Warning as i32);
+		return Ok(());
 	}
 
 	let counts: Vec<_> = streams
@@ -81,13 +81,11 @@ fn run() -> Result<()> {
 	};
 
 	let words_to_print: Vec<_> = if let Some(s) = cargs.excluded_words {
-		let exclude_stream = Stream::from_str(&s);
+		let mut exclude_stream =
+			Stream::from_str(&s).context("Can't read --excluded-words file")?;
 
-		let exclusions = if let Some(mut s) = exclude_stream {
-			Exclusions::from_stream(&mut s).expect("Can't read --excluded-words file")
-		} else {
-			exit(Return::Error as i32);
-		};
+		let exclusions = Exclusions::from_stream(&mut exclude_stream)
+			.context("Can't read --excluded-words file")?;
 
 		words_to_print
 			.into_iter()
