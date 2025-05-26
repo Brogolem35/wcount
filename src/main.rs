@@ -21,7 +21,13 @@ enum Return {
 }
 
 fn main() {
-	run().unwrap();
+	match run() {
+		Ok(_) => match warning_printed() {
+			true => exit(Return::Warning as i32),
+			false => exit(Return::Ok as i32),
+		},
+		Err(_) => exit(Return::Error as i32),
+	}
 }
 
 fn run() -> Result<()> {
@@ -118,8 +124,5 @@ fn run() -> Result<()> {
 
 	wtr.flush().context("Could not output the result")?;
 
-	match warning_printed() {
-		true => exit(Return::Warning as i32),
-		false => exit(Return::Ok as i32),
-	}
+	Ok(())
 }
