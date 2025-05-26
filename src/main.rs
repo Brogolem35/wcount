@@ -26,7 +26,10 @@ fn main() -> ExitCode {
 			true => ExitCode::from(Return::Warning as u8),
 			false => ExitCode::from(Return::Ok as u8),
 		},
-		Err(_) => ExitCode::from(Return::Error as u8),
+		Err(e) => {
+			eprintln!("{:#}", e);
+			ExitCode::from(Return::Error as u8)
+		}
 	}
 }
 
