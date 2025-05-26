@@ -6,13 +6,13 @@ mod stream;
 mod warning;
 use std::{io, process::exit};
 
+use anyhow::{anyhow, Context, Result};
 use clap::Parser;
 use count::*;
 use exclusions::Exclusions;
 use stream::Stream;
 use ustr::Ustr;
 use warning::warning_printed;
-use anyhow::Result;
 
 enum Return {
 	Ok = 0,
@@ -30,18 +30,16 @@ fn run() -> Result<()> {
 	let files = &cargs.files;
 
 	if files.is_empty() {
-		wprintln!("No files entered");
-		exit(Return::Error as i32);
+		return Result::Err(anyhow!("No files entered"));
 	}
 
 	let streams: Vec<_> = files.iter().filter_map(|f| Stream::from_str(f)).collect();
 
 	if streams.is_empty() {
-		wprintln!("Args does not contain any valid files to process");
-		exit(Return::Error as i32);
+		return Result::Err(anyhow!("Args does not contain any valid files to process"));
 	}
 
-	if cargs.werror && warning_printed()  {
+	if cargs.werror && warning_printed() {
 		exit(Return::Warning as i32);
 	}
 
@@ -95,30 +93,30 @@ fn run() -> Result<()> {
 
 	let mut wtr = csv::Writer::from_writer(io::stdout());
 	wtr.write_field("word")
-		.expect("Could not output the result");
+		.context("Could not output the result")?;
 
 	if display_total {
 		wtr.write_field(&cargs.total_label)
-			.expect("Could not output the result");
+			.context("Could not output the result")?;
 	}
 
 	wtr.write_record(counts.iter().map(|r| r.label()))
-		.expect("Could not output the result");
+		.context("Could not output the result")?;
 
 	for (word, count) in words_to_print {
 		wtr.write_field(word.as_str())
-			.expect("Could not output the result");
+			.context("Could not output the result")?;
 
 		if display_total {
 			wtr.write_field(count.to_string())
-				.expect("Could not output the result");
+				.context("Could not output the result")?;
 		}
 
 		wtr.write_record(counts.iter().map(|r| r.count(&word).to_string()))
-			.expect("Could not output the result");
+			.context("Could not output the result")?;
 	}
 
-	wtr.flush().expect("Could not output the result");
+	wtr.flush().context("Could not output the result")?;
 
 	match warning_printed() {
 		true => exit(Return::Warning as i32),
