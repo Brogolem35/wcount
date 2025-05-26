@@ -48,10 +48,6 @@ fn run() -> Result<()> {
 		return Err(anyhow!("Args does not contain any valid files to process"));
 	}
 
-	if cargs.werror && warning_printed() {
-		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
-	}
-
 	let counts: Vec<_> = streams
 		.into_iter()
 		.filter_map(|s| {
@@ -62,6 +58,10 @@ fn run() -> Result<()> {
 			)
 		})
 		.collect();
+
+	if cargs.werror && warning_printed() {
+		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
+	}
 
 	let total = TotalCount::from_counts(counts.iter());
 
