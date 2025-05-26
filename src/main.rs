@@ -39,17 +39,17 @@ fn run() -> Result<()> {
 	let files = &cargs.files;
 
 	if files.is_empty() {
-		return Result::Err(anyhow!("No files entered"));
+		return Err(anyhow!("No files entered"));
 	}
 
 	let streams: Vec<_> = files.iter().filter_map(|f| Stream::from_str(f)).collect();
 
 	if streams.is_empty() {
-		return Result::Err(anyhow!("Args does not contain any valid files to process"));
+		return Err(anyhow!("Args does not contain any valid files to process"));
 	}
 
 	if cargs.werror && warning_printed() {
-		return Result::Err(anyhow!("--werror: Processes stopped early due to warnings"));
+		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
 	}
 
 	let counts: Vec<_> = streams
