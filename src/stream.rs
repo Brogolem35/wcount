@@ -3,6 +3,8 @@ use std::{
 	io::{self, Read},
 };
 
+use crate::wprintln;
+
 /// Represents a stream of string, either from a file or from Stdin.
 #[derive(Debug)]
 pub enum Stream {
@@ -26,7 +28,7 @@ impl Stream {
 		let meta = match fs::metadata(path) {
 			Ok(meta) => meta,
 			Err(e) => {
-				eprintln!("{}: {}", path, e);
+				wprintln!("{}: {}", path, e);
 				return None;
 			}
 		};
@@ -35,14 +37,14 @@ impl Stream {
 			if let Ok(file) = File::open(path) {
 				Some(Stream::File(file, path.to_string()))
 			} else {
-				eprintln!("{}: Error accessing", path);
+				wprintln!("{}: Error accessing", path);
 				None
 			}
 		} else if meta.is_dir() {
-			eprintln!("{}: Is a directory", path);
+			wprintln!("{}: Is a directory", path);
 			None
 		} else {
-			eprintln!("{}: Error accessing", path);
+			wprintln!("{}: Error accessing", path);
 			None
 		}
 	}
@@ -56,13 +58,13 @@ impl Stream {
 		match self {
 			Stream::Stdin(si) => {
 				if si.read_to_string(&mut buf).is_err() {
-					eprintln!("-: invalid UTF-8");
+					wprintln!("-: invalid UTF-8");
 					return None;
 				}
 			}
 			Stream::File(f, n) => {
 				if f.read_to_string(&mut buf).is_err() {
-					eprintln!("{}: invalid UTF-8", n);
+					wprintln!("{}: invalid UTF-8", n);
 					return None;
 				}
 			}

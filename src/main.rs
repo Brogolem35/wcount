@@ -26,14 +26,14 @@ fn main() {
 	let files = &cargs.files;
 
 	if files.is_empty() {
-		eprintln!("No files entered");
+		wprintln!("No files entered");
 		exit(Return::Error as i32);
 	}
 
 	let streams: Vec<_> = files.iter().filter_map(|f| Stream::from_str(f)).collect();
 
 	if streams.is_empty() {
-		eprintln!("Args does not contain any valid files to process");
+		wprintln!("Args does not contain any valid files to process");
 		exit(Return::Error as i32);
 	}
 
