@@ -5,7 +5,7 @@ static WARNING_PRINTED: AtomicBool = AtomicBool::new(false);
 #[macro_export]
 macro_rules! wprintln {
 	($($tt:tt)*) => {
-                crate::warning::set_warning(true);
+                $crate::warning::set_warning(true);
                 eprintln!($($tt)*);
         };
 }
