@@ -12,6 +12,7 @@ use exclusions::Exclusions;
 use stream::Stream;
 use ustr::Ustr;
 use warning::warning_printed;
+use anyhow::Result;
 
 enum Return {
 	Ok = 0,
@@ -20,6 +21,10 @@ enum Return {
 }
 
 fn main() {
+	run().unwrap();
+}
+
+fn run() -> Result<()> {
 	let cargs = args::Cli::parse(); // CLI arguments
 
 	let files = &cargs.files;
