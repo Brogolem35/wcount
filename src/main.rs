@@ -11,6 +11,7 @@ use count::*;
 use exclusions::Exclusions;
 use stream::Stream;
 use ustr::Ustr;
+use warning::warning_printed;
 
 enum Return {
 	Ok = 0,
@@ -19,8 +20,6 @@ enum Return {
 }
 
 fn main() {
-	let mut result = Return::Ok;
-
 	let cargs = args::Cli::parse(); // CLI arguments
 
 	let files = &cargs.files;
@@ -38,8 +37,6 @@ fn main() {
 	}
 
 	if files.len() != streams.len() {
-		result = Return::Warning;
-
 		if cargs.werror {
 			exit(Return::Warning as i32);
 		}
@@ -120,5 +117,8 @@ fn main() {
 
 	wtr.flush().expect("Could not output the result");
 
-	exit(result as i32);
+	match warning_printed() {
+		true => exit(Return::Warning as i32),
+		false => exit(Return::Ok as i32),
+	}
 }
