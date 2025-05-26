@@ -49,7 +49,7 @@ fn run() -> Result<()> {
 	}
 
 	if cargs.werror && warning_printed() {
-		return Ok(());
+		return Result::Err(anyhow!("--werror: Processes stopped early due to warnings"));
 	}
 
 	let counts: Vec<_> = streams
