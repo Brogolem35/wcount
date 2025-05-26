@@ -3,6 +3,7 @@ mod count;
 mod exclusions;
 mod regexes;
 mod stream;
+mod warning;
 use std::{io, process::exit};
 
 use clap::Parser;
