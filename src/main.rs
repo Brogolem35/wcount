@@ -4,6 +4,7 @@ mod exclusions;
 mod regexes;
 mod stream;
 mod warning;
+use std::fmt::Write;
 use std::{io, process::ExitCode};
 
 use anyhow::{anyhow, Context, Result};
@@ -109,16 +110,32 @@ fn run() -> Result<()> {
 	wtr.write_record(counts.iter().map(|r| r.label()))
 		.context("Could not output the result")?;
 
+	// TODO: Document and clean up
+	let mut record_buf = String::new();
 	for (word, count) in words_to_print {
 		wtr.write_field(word.as_str())
 			.context("Could not output the result")?;
 
 		if display_total {
-			wtr.write_field(count.to_string())
-				.context("Could not output the result")?;
+			wtr.write_field({
+				record_buf.clear();
+				write!(&mut record_buf, "{}", count)?;
+
+				&record_buf
+			})
+			.context("Could not output the result")?;
 		}
 
-		wtr.write_record(counts.iter().map(|r| r.count(&word).to_string()))
+		for c in counts.iter() {
+			wtr.write_field({
+				record_buf.clear();
+				let _ = write!(&mut record_buf, "{}", c.count(&word));
+
+				&record_buf
+			})
+			.context("Could not output the result")?;
+		}
+		wtr.write_record(None::<&[u8]>)
 			.context("Could not output the result")?;
 	}
 
