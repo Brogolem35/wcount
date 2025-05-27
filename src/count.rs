@@ -43,6 +43,7 @@ impl StreamWordCount {
 	}
 
 	/// Returns the label of the `Stream`.
+	#[inline]
 	pub fn label(&self) -> String {
 		self.from.label()
 	}
@@ -61,6 +62,7 @@ impl StreamWordCount {
 	}
 
 	/// Returns the count of the word `s`.
+	#[inline]
 	pub fn count(&self, s: &Ustr) -> usize {
 		*self.counts.get(s).unwrap_or(&0)
 	}

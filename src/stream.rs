@@ -76,6 +76,7 @@ impl Stream {
 	/// Returns the label of the `Stream`.
 	///
 	/// Label is `standard_input` for Stdin, and the path of file for the File.
+	#[inline]
 	pub fn label(&self) -> String {
 		match self {
 			Self::Stdin(_) => String::from("standard_input"),

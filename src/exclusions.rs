@@ -21,6 +21,7 @@ impl Exclusions {
 	}
 
 	/// Checks if the word `s` is in the set.
+	#[inline]
 	pub fn contains(&self, s: &Ustr) -> bool {
 		self.words.contains(s)
 	}
