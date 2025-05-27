@@ -43,7 +43,7 @@ fn run() -> Result<()> {
 	}
 
 	let counts: Vec<_> = files
-		.into_iter()
+		.iter()
 		.filter_map(|f| Stream::from_str(f))
 		.filter_map(|s| {
 			StreamWordCount::from_stream(
