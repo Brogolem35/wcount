@@ -16,8 +16,8 @@ use warning::warning_printed;
 
 enum Return {
 	Ok = 0,
-	Warning = 1,
-	Error = 2,
+	Error = 1,
+	Warning = 2,
 }
 
 fn main() -> ExitCode {
