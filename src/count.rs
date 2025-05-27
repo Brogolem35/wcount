@@ -50,7 +50,7 @@ impl StreamWordCount {
 	fn count_words(s: &str, pattern: &'static Regex, case_sensitive: bool) -> UstrMap<usize> {
 		let text = if case_sensitive { s } else { &s.to_lowercase() };
 
-		let tokens = pattern.find_iter(&text).map(|m| m.as_str());
+		let tokens = pattern.find_iter(text).map(|m| m.as_str());
 		let counts = tokens.fold(UstrMap::default(), |mut a, c| {
 			*a.entry(ustr(c)).or_insert(0) += 1;
 			a
