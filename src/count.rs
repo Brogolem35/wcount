@@ -48,11 +48,7 @@ impl StreamWordCount {
 
 	/// Counts every string slice, that is recognised as a word by the `pattern`, and returns the counts as a UstrMap.
 	fn count_words(s: &str, pattern: &'static Regex, case_sensitive: bool) -> UstrMap<usize> {
-		let text = if case_sensitive {
-			s
-		} else {
-			&s.to_lowercase()
-		};
+		let text = if case_sensitive { s } else { &s.to_lowercase() };
 
 		let tokens = pattern.find_iter(&text).map(|m| m.as_str());
 		let counts = tokens.fold(UstrMap::default(), |mut a, c| {
