@@ -1,21 +1,23 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
+
 use regex::Regex;
 
-pub static ALL_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|'|-)*").unwrap());
+pub static ALL_REGEX: LazyLock<Regex> =
+	LazyLock::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|'|-)*").unwrap());
 
-pub static ALPHANUMERIC_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"(\p{Alphabetic}|\d)+").unwrap());
+pub static ALPHANUMERIC_REGEX: LazyLock<Regex> =
+	LazyLock::new(|| Regex::new(r"(\p{Alphabetic}|\d)+").unwrap());
 
-pub static ALPHA_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\p{Alphabetic})+").unwrap());
+pub static ALPHA_REGEX: LazyLock<Regex> =
+	LazyLock::new(|| Regex::new(r"(\p{Alphabetic})+").unwrap());
 
-pub static NUMERIC_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"(\d)+").unwrap());
+pub static NUMERIC_REGEX: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"(\d)+").unwrap());
 
-pub static NODASH_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|')*").unwrap());
+pub static NODASH_REGEX: LazyLock<Regex> =
+	LazyLock::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|')*").unwrap());
 
-pub static NOAPOSTROPHE_REGEX: Lazy<Regex> =
-	Lazy::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|-)*").unwrap());
+pub static NOAPOSTROPHE_REGEX: LazyLock<Regex> =
+	LazyLock::new(|| Regex::new(r"(\p{Alphabetic}|\d)(\p{Alphabetic}|\d|-)*").unwrap());
 
 #[cfg(test)]
 mod tests {
