@@ -34,9 +34,9 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<()> {
-	let cargs = args::Cli::parse(); // CLI arguments
+	let args = args::Cli::parse(); // CLI arguments
 
-	let files = &cargs.files;
+	let files = &args.files;
 
 	if files.is_empty() {
 		return Err(anyhow!("No files entered"));
@@ -48,13 +48,13 @@ fn run() -> Result<()> {
 		.filter_map(|s| {
 			StreamWordCount::from_stream(
 				s,
-				cargs.pattern.to_regex(),
-				cargs.case_sensitive,
+				args.pattern.to_regex(),
+				args.case_sensitive,
 			)
 		})
 		.collect();
 
-	if cargs.werror && warning_printed() {
+	if args.werror && warning_printed() {
 		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
 	}
 
@@ -64,25 +64,25 @@ fn run() -> Result<()> {
 
 	let total = TotalCount::from_counts(counts.iter());
 
-	let display_total = cargs.display_total.should_display(counts.len());
+	let display_total = args.display_total.should_display(counts.len());
 
 	let mut total_counts = total.to_ordered_vec();
 
-	if cargs.reverse {
+	if args.reverse {
 		total_counts.reverse();
 	}
 
-	let words_to_print: Vec<(Ustr, usize)> = if cargs.row_count == 0 {
+	let words_to_print: Vec<(Ustr, usize)> = if args.row_count == 0 {
 		total_counts.iter().map(|(s, i)| (*s, *i)).collect()
 	} else {
 		total_counts
 			.iter()
 			.map(|(s, i)| (*s, *i))
-			.take(cargs.row_count)
+			.take(args.row_count)
 			.collect()
 	};
 
-	let words_to_print: Vec<_> = if let Some(s) = cargs.excluded_words {
+	let words_to_print: Vec<_> = if let Some(s) = args.excluded_words {
 		let mut exclude_stream =
 			Stream::from_str(&s).context("Can't read --excluded-words file")?;
 
@@ -102,7 +102,7 @@ fn run() -> Result<()> {
 		.context("Could not output the result")?;
 
 	if display_total {
-		wtr.write_field(&cargs.total_label)
+		wtr.write_field(&args.total_label)
 			.context("Could not output the result")?;
 	}
 
