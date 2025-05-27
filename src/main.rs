@@ -34,7 +34,7 @@ fn main() -> ExitCode {
 }
 
 fn run() -> Result<()> {
-	let args = args::Cli::parse(); // CLI arguments
+	let args = args::Cli::try_parse()?; // CLI arguments
 
 	let files = &args.files;
 
