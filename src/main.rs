@@ -42,14 +42,9 @@ fn run() -> Result<()> {
 		return Err(anyhow!("No files entered"));
 	}
 
-	let streams: Vec<_> = files.iter().filter_map(|f| Stream::from_str(f)).collect();
-
-	if streams.is_empty() {
-		return Err(anyhow!("Args does not contain any valid files to process"));
-	}
-
-	let counts: Vec<_> = streams
+	let counts: Vec<_> = files
 		.into_iter()
+		.filter_map(|f| Stream::from_str(f))
 		.filter_map(|s| {
 			StreamWordCount::from_stream(
 				s,
@@ -61,6 +56,10 @@ fn run() -> Result<()> {
 
 	if cargs.werror && warning_printed() {
 		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
+	}
+
+	if counts.is_empty() {
+		return Err(anyhow!("Args does not contain any valid files to process"));
 	}
 
 	let total = TotalCount::from_counts(counts.iter());
