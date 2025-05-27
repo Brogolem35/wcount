@@ -399,7 +399,6 @@ dependencies = [
  "anyhow",
  "clap",
  "csv",
- "once_cell",
  "regex",
  "ustr",
 ]
