@@ -45,7 +45,7 @@ fn run() -> Result<()> {
 		return Err(anyhow!("No files entered"));
 	}
 
-	let counts = get_counts(files, args.pattern, args.case_sensitive, args.werror)?;
+	let counts = get_counts(files, args.pattern, args.case_insensitive, args.werror)?;
 
 	if counts.is_empty() {
 		return Err(anyhow!("Args does not contain any valid files to process"));
@@ -94,7 +94,7 @@ fn run() -> Result<()> {
 fn get_counts(
 	files: &Vec<String>,
 	pattern: WordRegex,
-	case_sensitive: bool,
+	case_insensitive: bool,
 	werror: bool,
 ) -> Result<Vec<StreamWordCount>> {
 	let counts = match werror {
@@ -102,14 +102,22 @@ fn get_counts(
 			.iter()
 			.map_while(|f| Stream::from_str(f))
 			.map_while(|s| {
-				StreamWordCount::from_stream(s, pattern.to_regex(), case_sensitive)
+				StreamWordCount::from_stream(
+					s,
+					pattern.to_regex(),
+					case_insensitive,
+				)
 			})
 			.collect(),
 		false => files
 			.iter()
 			.filter_map(|f| Stream::from_str(f))
 			.filter_map(|s| {
-				StreamWordCount::from_stream(s, pattern.to_regex(), case_sensitive)
+				StreamWordCount::from_stream(
+					s,
+					pattern.to_regex(),
+					case_insensitive,
+				)
 			})
 			.collect(),
 	};

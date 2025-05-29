@@ -58,9 +58,9 @@ pub struct Cli {
 	/// Files that the words will be counted from
 	pub files: Vec<String>,
 
-	/// Case sensitivity, results will be displayed in lower case if false
+	/// Case insensitivity, results will be displayed in lower case
 	#[arg(short, long, default_value_t = false)]
-	pub case_sensitive: bool,
+	pub case_insensitive: bool,
 
 	/// Pattern to match for words
 	#[arg(long, value_enum ,default_value_t = {WordRegex::All})]
@@ -114,7 +114,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -132,7 +132,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -154,7 +154,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -175,7 +175,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Disabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -196,7 +196,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Force));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -217,7 +217,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -239,7 +239,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 75);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -261,7 +261,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 250);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -282,7 +282,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(cli.case_sensitive);
+		assert!(cli.case_insensitive);
 		assert!(!cli.reverse);
 	}
 
@@ -303,7 +303,7 @@ mod tests {
 		assert!(matches!(cli.display_total, TotalColumn::Enabled));
 		assert!(!cli.werror);
 		assert_eq!(cli.row_count, 50);
-		assert!(!cli.case_sensitive);
+		assert!(!cli.case_insensitive);
 		assert!(cli.reverse);
 	}
 }

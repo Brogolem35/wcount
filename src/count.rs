@@ -24,7 +24,7 @@ impl StreamWordCount {
 	pub fn from_stream(
 		mut stream: Stream,
 		pattern: &'static Regex,
-		case_sensitive: bool,
+		case_insensitive: bool,
 	) -> Option<Self> {
 		thread_local! {
 			static BUF: RefCell<String> = const {RefCell::new(String::new())};
@@ -37,7 +37,7 @@ impl StreamWordCount {
 
 			Some(StreamWordCount {
 				from: stream,
-				counts: Self::count_words(buf, pattern, case_sensitive),
+				counts: Self::count_words(buf, pattern, case_insensitive),
 			})
 		})
 	}
@@ -58,8 +58,12 @@ impl StreamWordCount {
 	}
 
 	/// Counts every string slice, that is recognised as a word by the `pattern`, and returns the counts as a UstrMap.
-	fn count_words(s: &str, pattern: &'static Regex, case_sensitive: bool) -> UstrMap<usize> {
-		let text = if case_sensitive { s } else { &s.to_lowercase() };
+	fn count_words(s: &str, pattern: &'static Regex, case_insensitive: bool) -> UstrMap<usize> {
+		let text = if case_insensitive {
+			&s.to_lowercase()
+		} else {
+			s
+		};
 
 		let tokens = pattern.find_iter(text).map(|m| m.as_str());
 		let counts = tokens.fold(UstrMap::default(), |mut a, c| {
