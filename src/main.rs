@@ -5,6 +5,7 @@ mod regexes;
 mod stream;
 mod warning;
 use std::fmt::Write;
+use std::io::BufWriter;
 use std::{io, process::ExitCode};
 
 use anyhow::{anyhow, Context, Result};
@@ -109,56 +110,46 @@ fn output_csv(
 	display_total: bool,
 	total_label: &str,
 ) -> Result<()> {
-	let mut wtr = csv::Writer::from_writer(io::stdout());
-
-	wtr.write_field("word")
-		.context("Could not output the result")?;
-
-	if display_total {
-		wtr.write_field(total_label)
-			.context("Could not output the result")?;
-	}
-
-	wtr.write_record(counts.iter().map(|r| r.label()))
-		.context("Could not output the result")?;
-
 	// I used just cast the `count`s to strings with `to_string`
 	// but it caused much overhead due to constant allocation and deallocation.
 	// Using a reusable buffer like this is much faster.
-	let mut record_buf = String::new();
+	let mut out_buf = String::new();
+	let mut out = BufWriter::new(io::stdout().lock());
 
+	write!(&mut out_buf, "word,")?;
+
+	if display_total {
+		write!(&mut out_buf, "{},", total_label)?;
+	}
+
+	for label in counts.iter().map(|r| r.label()) {
+		write!(&mut out_buf, "{},", label)?;
+	}
+	out_buf.pop().context("No ',' at the end")?;
+	out_buf.push('\n');
+
+	io::Write::write(&mut out, out_buf.as_bytes())?;
 	for (word, count) in words_to_print {
-		wtr.write_field(word.as_str())
-			.context("Could not output the result")?;
+		out_buf.clear();
+
+		write!(&mut out_buf, "{},", word.as_str())?;
 
 		if display_total {
-			wtr.write_field({
-				record_buf.clear();
-				write!(&mut record_buf, "{}", count)?;
-
-				&record_buf
-			})
-			.context("Could not output the result")?;
+			write!(&mut out_buf, "{},", count)?;
 		}
 
 		// Can't just use `write_record`, as the closures didn't play well with the buffer.
 		for c in counts.iter() {
-			wtr.write_field({
-				record_buf.clear();
-				let _ = write!(&mut record_buf, "{}", c.count(&word));
-
-				&record_buf
-			})
-			.context("Could not output the result")?;
+			write!(&mut out_buf, "{},", c.count(&word))?;
 		}
+		out_buf.pop().context("No ',' at the end")?;
+		out_buf.push('\n');
+
 		// `write_record` with an empty iterator must be called when all fields are written with `write_field`
 		// because `csv` lib does not expose a public line termination API.
 		// This not a hack I found, this thing is documented: https://docs.rs/csv/latest/csv/struct.Writer.html#method.write_field
-		wtr.write_record(None::<&[u8]>)
-			.context("Could not output the result")?;
+		io::Write::write(&mut out, out_buf.as_bytes())?;
 	}
-
-	wtr.flush().context("Could not output the result")?;
 
 	Ok(())
 }
