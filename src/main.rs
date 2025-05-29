@@ -97,11 +97,24 @@ fn get_counts(
 	case_sensitive: bool,
 	werror: bool,
 ) -> Result<Vec<StreamWordCount>> {
-	let counts: Vec<_> = files
-		.iter()
-		.filter_map(|f| Stream::from_str(f))
-		.filter_map(|s| StreamWordCount::from_stream(s, pattern.to_regex(), case_sensitive))
-		.collect();
+	let counts = match werror {
+		true => files
+			.iter()
+			.map_while(|f| Stream::from_str(f))
+			.map_while(|s| {
+				StreamWordCount::from_stream(s, pattern.to_regex(), case_sensitive)
+			})
+			.collect(),
+		false => files
+			.iter()
+			.filter_map(|f| Stream::from_str(f))
+			.filter_map(|s| {
+				StreamWordCount::from_stream(s, pattern.to_regex(), case_sensitive)
+			})
+			.collect(),
+	};
+
+	//warning_printed()
 
 	if werror && warning_printed() {
 		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
