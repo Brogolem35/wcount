@@ -160,7 +160,7 @@ mod tests {
 		let res = StreamWordCount::count_words(
 			"Lorem dolor Ipsum dolor. lorem? Dolor dolor",
 			&ALL_REGEX,
-			false,
+			true,
 		);
 
 		println!(
@@ -181,7 +181,7 @@ mod tests {
 		let res = StreamWordCount::count_words(
 			"Lorem dolor Ipsum dolor. lorem? Dolor dolor",
 			&ALL_REGEX,
-			true,
+			false,
 		);
 
 		assert_eq!(res[&ustr("lorem")], 1);

@@ -266,13 +266,13 @@ mod tests {
 	}
 
 	#[test]
-	fn case_sensitive() {
+	fn case_insensitive() {
 		let cmd = Cli::command();
 		let matches = cmd.get_matches_from(vec![
 			"wcount", // executable name
 			"file1.txt",
 			"file2.txt",
-			"--case-sensitive",
+			"--case-insensitive",
 		]);
 
 		let cli = Cli::from_arg_matches(&matches).unwrap();
