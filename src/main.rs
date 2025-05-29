@@ -110,11 +110,12 @@ fn output_csv(
 	display_total: bool,
 	total_label: &str,
 ) -> Result<()> {
-	// I used just cast the `count`s to strings with `to_string`
-	// but it caused much overhead due to constant allocation and deallocation.
-	// Using a reusable buffer like this is much faster.
+	// Using two buffers.
+	// `out_buf` is used to avoid unnecessary allocations caused by the `to_string`
+	// method of the numeric types. The line is formatted here before pushing to writer.
 	let mut out_buf = String::new();
-	let mut out = BufWriter::new(io::stdout().lock());
+	// Buffered writer to stdout. Much faster than printing to stdout directly.
+	let mut writer = BufWriter::new(io::stdout().lock());
 
 	write!(&mut out_buf, "word,")?;
 
@@ -125,10 +126,11 @@ fn output_csv(
 	for label in counts.iter().map(|r| r.label()) {
 		write!(&mut out_buf, "{},", label)?;
 	}
+	// Last ',' is redundant.
 	out_buf.pop().context("No ',' at the end")?;
 	out_buf.push('\n');
 
-	io::Write::write(&mut out, out_buf.as_bytes())?;
+	io::Write::write(&mut writer, out_buf.as_bytes())?;
 	for (word, count) in words_to_print {
 		out_buf.clear();
 
@@ -145,10 +147,7 @@ fn output_csv(
 		out_buf.pop().context("No ',' at the end")?;
 		out_buf.push('\n');
 
-		// `write_record` with an empty iterator must be called when all fields are written with `write_field`
-		// because `csv` lib does not expose a public line termination API.
-		// This not a hack I found, this thing is documented: https://docs.rs/csv/latest/csv/struct.Writer.html#method.write_field
-		io::Write::write(&mut out, out_buf.as_bytes())?;
+		io::Write::write(&mut writer, out_buf.as_bytes())?;
 	}
 
 	Ok(())
