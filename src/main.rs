@@ -9,6 +9,7 @@ use std::io::BufWriter;
 use std::{io, process::ExitCode};
 
 use anyhow::{anyhow, Context, Result};
+use args::WordRegex;
 use clap::Parser;
 use count::*;
 use exclusions::Exclusions;
@@ -44,21 +45,7 @@ fn run() -> Result<()> {
 		return Err(anyhow!("No files entered"));
 	}
 
-	let counts: Vec<_> = files
-		.iter()
-		.filter_map(|f| Stream::from_str(f))
-		.filter_map(|s| {
-			StreamWordCount::from_stream(
-				s,
-				args.pattern.to_regex(),
-				args.case_sensitive,
-			)
-		})
-		.collect();
-
-	if args.werror && warning_printed() {
-		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
-	}
+	let counts = get_counts(files, args.pattern, args.case_sensitive, args.werror)?;
 
 	if counts.is_empty() {
 		return Err(anyhow!("Args does not contain any valid files to process"));
@@ -102,6 +89,25 @@ fn run() -> Result<()> {
 	output_csv(counts, words_to_print, display_total, &args.total_label)?;
 
 	Ok(())
+}
+
+fn get_counts(
+	files: &Vec<String>,
+	pattern: WordRegex,
+	case_sensitive: bool,
+	werror: bool,
+) -> Result<Vec<StreamWordCount>> {
+	let counts: Vec<_> = files
+		.iter()
+		.filter_map(|f| Stream::from_str(f))
+		.filter_map(|s| StreamWordCount::from_stream(s, pattern.to_regex(), case_sensitive))
+		.collect();
+
+	if werror && warning_printed() {
+		return Err(anyhow!("--werror: Processes stopped early due to warnings"));
+	}
+
+	Ok(counts)
 }
 
 fn output_csv(
