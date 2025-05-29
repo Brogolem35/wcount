@@ -1,4 +1,5 @@
 use std::{
+	cell::RefCell,
 	collections::HashMap,
 	hash::{BuildHasher, Hash},
 };
@@ -25,11 +26,19 @@ impl StreamWordCount {
 		pattern: &'static Regex,
 		case_sensitive: bool,
 	) -> Option<Self> {
-		let content = stream.read_to_string()?;
+		thread_local! {
+			static BUF: RefCell<String> = const {RefCell::new(String::new())};
+		}
 
-		Some(StreamWordCount {
-			from: stream,
-			counts: Self::count_words(&content, pattern, case_sensitive),
+		// TODO: Better error handling
+		BUF.with_borrow_mut(|buf| {
+			buf.clear();
+			stream.read_to_string(buf)?;
+
+			Some(StreamWordCount {
+				from: stream,
+				counts: Self::count_words(buf, pattern, case_sensitive),
+			})
 		})
 	}
 

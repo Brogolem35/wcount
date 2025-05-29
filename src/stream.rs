@@ -52,25 +52,23 @@ impl Stream {
 	/// Reads the `Stream` and returns its contents as a `String`.
 	///
 	/// Can't read invalid UTF-8 content.
-	pub fn read_to_string(&mut self) -> Option<String> {
-		let mut buf = String::new();
-
+	pub fn read_to_string(&mut self, buf: &mut String) -> Option<()> {
 		match self {
 			Stream::Stdin(si) => {
-				if si.read_to_string(&mut buf).is_err() {
+				if si.read_to_string(buf).is_err() {
 					wprintln!("-: invalid UTF-8");
 					return None;
 				}
 			}
 			Stream::File(f, n) => {
-				if f.read_to_string(&mut buf).is_err() {
+				if f.read_to_string(buf).is_err() {
 					wprintln!("{}: invalid UTF-8", n);
 					return None;
 				}
 			}
 		};
 
-		Some(buf)
+		Some(())
 	}
 
 	/// Returns the label of the `Stream`.

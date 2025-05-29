@@ -10,7 +10,9 @@ pub struct Exclusions {
 impl Exclusions {
 	/// Creates Exclusions from a `Stream`.
 	pub fn from_stream(stream: &mut Stream) -> Option<Self> {
-		let content = stream.read_to_string()?;
+		let mut content = String::new();
+
+		stream.read_to_string(&mut content)?;
 		let mut words = UstrSet::default();
 
 		for s in content.split_ascii_whitespace() {
