@@ -55,14 +55,14 @@ impl Stream {
 	pub fn read_to_string(&mut self, buf: &mut String) -> Option<()> {
 		match self {
 			Stream::Stdin(si) => {
-				if si.read_to_string(buf).is_err() {
-					wprintln!("-: invalid UTF-8");
+				if let Err(e) = si.read_to_string(buf) {
+					wprintln!("-: {:#}", e);
 					return None;
 				}
 			}
 			Stream::File(f, n) => {
-				if f.read_to_string(buf).is_err() {
-					wprintln!("{}: invalid UTF-8", n);
+				if let Err(e) = f.read_to_string(buf) {
+					wprintln!("{}: {:#}", n, e);
 					return None;
 				}
 			}
