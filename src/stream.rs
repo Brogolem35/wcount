@@ -34,11 +34,12 @@ impl Stream {
 		};
 
 		if meta.is_file() {
-			if let Ok(file) = File::open(path) {
-				Some(Stream::File(file, path.to_string()))
-			} else {
-				wprintln!("{}: Error accessing", path);
-				None
+			match File::open(path) {
+				Ok(file) => Some(Stream::File(file, path.to_string())),
+				Err(e) => {
+					wprintln!("{}: {}", path, e);
+					None
+				}
 			}
 		} else if meta.is_dir() {
 			wprintln!("{}: Is a directory", path);
