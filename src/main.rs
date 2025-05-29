@@ -98,20 +98,35 @@ fn run() -> Result<()> {
 		words_to_print
 	};
 
+	output_csv(counts, words_to_print, display_total, &args.total_label)?;
+
+	Ok(())
+}
+
+fn output_csv(
+	counts: Vec<StreamWordCount>,
+	words_to_print: Vec<(Ustr, usize)>,
+	display_total: bool,
+	total_label: &str,
+) -> Result<()> {
 	let mut wtr = csv::Writer::from_writer(io::stdout());
+
 	wtr.write_field("word")
 		.context("Could not output the result")?;
 
 	if display_total {
-		wtr.write_field(&args.total_label)
+		wtr.write_field(total_label)
 			.context("Could not output the result")?;
 	}
 
 	wtr.write_record(counts.iter().map(|r| r.label()))
 		.context("Could not output the result")?;
 
-	// TODO: Document and clean up
+	// I used just cast the `count`s to strings with `to_string`
+	// but it caused much overhead due to constant allocation and deallocation.
+	// Using a reusable buffer like this is much faster.
 	let mut record_buf = String::new();
+
 	for (word, count) in words_to_print {
 		wtr.write_field(word.as_str())
 			.context("Could not output the result")?;
@@ -126,6 +141,7 @@ fn run() -> Result<()> {
 			.context("Could not output the result")?;
 		}
 
+		// Can't just use `write_record`, as the closures didn't play well with the buffer.
 		for c in counts.iter() {
 			wtr.write_field({
 				record_buf.clear();
@@ -135,6 +151,9 @@ fn run() -> Result<()> {
 			})
 			.context("Could not output the result")?;
 		}
+		// `write_record` with an empty iterator must be called when all fields are written with `write_field`
+		// because `csv` lib does not expose a public line termination API.
+		// This not a hack I found, this thing is documented: https://docs.rs/csv/latest/csv/struct.Writer.html#method.write_field
 		wtr.write_record(None::<&[u8]>)
 			.context("Could not output the result")?;
 	}
