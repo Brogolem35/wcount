@@ -14,7 +14,7 @@ $ ./target/release/wcount --version
 
 ## License
 
-wcount is licensed under the MIT license. Feel free to fork and use however you like.
+wcount is free software licensed under GPL-2.0-or-later license.
 
 ## Contributing
 
