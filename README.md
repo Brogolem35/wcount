@@ -12,6 +12,10 @@ $ cargo build --release
 $ ./target/release/wcount --version
 ```
 
+## Changelog
+
+[Changelog](CHANGELOG.md)
+
 ## License
 
 wcount is free software licensed under GPL-2.0-or-later license.
